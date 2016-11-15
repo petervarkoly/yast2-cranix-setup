@@ -1,0 +1,1 @@
+Yast2 module for setup the OSS.
