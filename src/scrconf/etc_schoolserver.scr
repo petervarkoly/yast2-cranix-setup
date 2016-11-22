@@ -1,0 +1,8 @@
+#
+
+.etc.schoolserver
+
+`ag_ini(
+  `SysConfigFile("/etc/sysconfig/schoolserver")
+)
+
