@@ -135,6 +135,7 @@ module OSS
                    mail = SCR.Read(path(".etc.schoolserver.SCHOOL_MAILSERVER")) 
                    prox = SCR.Read(path(".etc.schoolserver.SCHOOL_PROXY")) 
                    prin = SCR.Read(path(".etc.schoolserver.SCHOOL_PRINTSERVER")) 
+                 backup = SCR.Read(path(".etc.schoolserver.SCHOOL_BACKUP_SERVER")) 
                      nm = SCR.Read(path(".etc.schoolserver.SCHOOL_NETMASK")) 
                  intdev = Yast::UI.QueryWidget(Id(:intdev), :CurrentItem)
                  def_gw = Yast::UI.QueryWidget(Id(:def_gw), :Value)
@@ -181,8 +182,8 @@ module OSS
                     end
                     SCR.Write(path(".etc.schoolserver.SCHOOL_NET_GATEWAY"), def_gw )
                  end #end if is_gate
-		 SCR.Write(path(".etc.schoolserver"),nil)
-		 #Now let's start configuring network
+                 SCR.Write(path(".etc.schoolserver"),nil)
+                 #Now let's start configuring network
                  Routing.Forward_v4 = false
                  Routing.Forward_v6 = false
                  Routing.Routes = [
@@ -193,9 +194,65 @@ module OSS
                      "device"      => "-"
                    }
                  ]
+                 #Configure internal interface
+                 if NetworkInterfaces.Check(intdev)
+                     NetworkInterfaces.Edit(intdev)
+                 else
+                     NetworkInterfaces.Add
+                     NetworkInterfaces.Name = intdev
+                 end
+                 NetworkInterfaces.Current = {
+                     "BOOTPROTO" => "static",
+                     "NAME"      => intdev,
+                     "STARTMODE" => "onboot",
+                     "IPADDR"    => ip,
+                     "NETMASK"   => nm,
+                     "_aliases"  => {
+                         "mail"  => {
+                             "IPADDR"  => mail,
+                             "NETMASK" => nm,
+                             "LABEL"   => "mail"
+                         },
+                         "print" => {
+                             "IPADDR"  => prin,
+                             "NETMASK" => nm,
+                             "LABEL"   => "prin"
+                         },
+                             "proxy" => {
+                             "IPADDR"  => prox,
+                             "NETMASK" => nm,
+                             "LABEL"   => "prox"
+                         }
+                     }
+                 }
+                 NetworkInterfaces.Commit
+                 if SCR.Read(path(".etc.schoolserver.SCHOOL_USE_DHCP")) == "yes"
+		    SCR.Write(path(".sysconfig.dhcpd.DHCPD_INTERFACE"), intdev)
+		    SCR.Write(path(".sysconfig.dhcpd"), nil)
+                 end
+                 domain = SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN"))
+                 dns_tmp = DNS.Export
+                 Ops.set(dns_tmp, "hostname",    "schooladmin" )
+                 Ops.set(dns_tmp, "domain",      domain )
+                 Ops.set(dns_tmp, "nameservers", [ "127.0.0.1" ] )
+                 Ops.set(dns_tmp, "searchlist",  [domain] )
+                 DNS.Import(dns_tmp)
+                 DNS.modified = true
+
+                 host_tmp = Host.Export
+                 Ops.set(host_tmp, "hosts", {
+                                        ip     => ["schooladmin." + domain + " schooladmin"],
+                                        mail   => ["mailserver."  + domain + " mailserver" ],
+                                        prin   => ["printserver." + domain + " printserver" ],
+                                        prox   => ["proxy."       + domain + " proxy" ],
+                                        backup => ["backup."      + domain + " backup" ],
+                                   })
+                 Host.Import(host_tmp)
+
                  if is_gate
-		    _FW = SuSEFirewall.Export
-		    _FW["FW_DEV_EXT"] = extdev
+                    _FW = SuSEFirewall.Export
+                    _FW["FW_DEV_EXT"] = extdev
+                    _FW["FW_DEV_INT"] = intdev
                     _FW["FW_PROTECT_FROM_INT"] = "no"
                     _FW["FW_SERVICE_AUTODETECT"] = "no"
                     _FW["FW_ALLOW_PING_FW"] = "no"
@@ -203,11 +260,28 @@ module OSS
                     _FW["FW_ZONE_DEFAULT"] = "int"
                     _FW["enable_firewall"] = true
                     _FW["start_firewall"] = true
-		    SuSEFirewall.Import(_FW)
-	         else
+                    SuSEFirewall.Import(_FW)
+                    #Configure external interface
+                    if NetworkInterfaces.Check(extdev)
+                      NetworkInterfaces.Edit(extdev)
+                    else
+                      Lan.Add
+                      NetworkInterfaces.Add
+                      NetworkInterfaces.Name = extdev
+                    end
+                    NetworkInterfaces.Current = {
+                      "BOOTPROTO" => "static",
+                      "NAME"      => exdev,
+                      "STARTMODE" => "onboot",
+                      "IPADDR"    => ext_ip,
+                      "NETMASK"   => ext_nm
+                    }
+                    NetworkInterfaces.Commit
                  end #end if is_gate
-		 ret = :write
-		 break
+                 LanItems.modified = true
+                 Lan.Write
+                 ret = :write
+                 break
               end #end when :next
             end
             
@@ -298,12 +372,12 @@ module OSS
                  netm = Convert.to_string(UI.QueryWidget(Id(:netm),   :Value))
                  nets = net0 + "." + net1
                  domain = Convert.to_string(UI.QueryWidget(Id(:domain),:Value))
-		 if domain.split(".").size < 2
+                 if domain.split(".").size < 2
                     msg = Builtins.sformat(_("'%1' is an invalid Domain Name. Use something like school.edu."), domain)
                     Popup.Error(msg)
                     UI.SetFocus(Id(:domain))
                     next
-		 end
+                 end
                  SCR.Write(path(".etc.schoolserver.SCHOOL_NAME"),         Convert.to_string(UI.QueryWidget(Id(:schoolname),:Value)))
                  SCR.Write(path(".etc.schoolserver.SCHOOL_DOMAIN"),       domain )
                  SCR.Write(path(".etc.schoolserver.SCHOOL_REG_CODE"),     Convert.to_string(UI.QueryWidget(Id(:regcode),:Value)))
