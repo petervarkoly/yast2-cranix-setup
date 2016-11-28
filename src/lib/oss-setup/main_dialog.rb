@@ -43,7 +43,7 @@ module OSS
 			 ret = :network
                      else
                          if !File.exist?("/etc/sysconfig/schoolserver")
-                            `cp /usr/share/oss/templates/schoolserver /etc/sysconfig/schoolserver`
+                            `cp /usr/share/oss/setup/templates/schoolserver.ini /etc/sysconfig/schoolserver`
                          end
                          SCR.Read(path(".etc.schoolserver"))
                          ret = :basic
@@ -56,6 +56,8 @@ module OSS
                      ret = DialogsInst.CardDialog()
                 when :write
 		     SCR.Write(path(".etc.schoolserver"),nil)
+		     ret = DialogsInst.OssSetup()
+		     break
                 when :abort, :cancel
 		     break
                 end
