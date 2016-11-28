@@ -6,6 +6,7 @@
 
 require 'yast'
 require 'ui/dialog'
+require 'auth/authconf'
 
 Yast.import 'UI'
 Yast.import 'Icon'
@@ -140,6 +141,7 @@ module OSS
                  intdev = Yast::UI.QueryWidget(Id(:intdev), :CurrentItem)
                  def_gw = Yast::UI.QueryWidget(Id(:def_gw), :Value)
                  extdev = nil
+
                  if !IP.Check4(def_gw)
                     Popup.Error(_("The gateway IP address is incorrect"))
                     UI.SetFocus(Id(:def_gw))
@@ -206,21 +208,21 @@ module OSS
                      "NAME"      => intdev,
                      "STARTMODE" => "onboot",
                      "IPADDR"    => ip,
-                     "NETMASK"   => nm,
+                     "NETMASK"   => Netmask.FromBits(Builtins.tointeger(nm)),
                      "_aliases"  => {
                          "mail"  => {
                              "IPADDR"  => mail,
-                             "NETMASK" => nm,
+                             "NETMASK" => Netmask.FromBits(Builtins.tointeger(nm)),
                              "LABEL"   => "mail"
                          },
                          "print" => {
                              "IPADDR"  => prin,
-                             "NETMASK" => nm,
+                             "NETMASK" => Netmask.FromBits(Builtins.tointeger(nm)),
                              "LABEL"   => "prin"
                          },
                              "proxy" => {
                              "IPADDR"  => prox,
-                             "NETMASK" => nm,
+                             "NETMASK" => Netmask.FromBits(Builtins.tointeger(nm)),
                              "LABEL"   => "prox"
                          }
                      }
@@ -271,10 +273,10 @@ module OSS
                     end
                     NetworkInterfaces.Current = {
                       "BOOTPROTO" => "static",
-                      "NAME"      => exdev,
+                      "NAME"      => extdev,
                       "STARTMODE" => "onboot",
                       "IPADDR"    => ext_ip,
-                      "NETMASK"   => ext_nm
+                      "NETMASK"   => Netmask.FromBits(Builtins.tointeger(ext_nm))
                     }
                     NetworkInterfaces.Commit
                  end #end if is_gate
@@ -407,6 +409,115 @@ module OSS
             end
             return ret
         end
+
+	def OssSetup
+
+	    Progress.New(
+		_("Saving the Open School Server configuration"),
+		" ",
+		4,
+		[
+		    # progress stage 1/10
+		    _("Calculate settings"),
+		    _("Configure the samba"),
+		    _("Configure the auth-client"),
+		    _("Configure the base user and group"),
+		],
+		[
+		    # progress step 1/10
+		    _("Calculate settings ..."),
+		    _("Configure the samba ..."),
+		    _("Configure the auth-client ..."),
+		    _("Configure the base user and group ..."),
+		    # progress finished
+		    _("Finished")
+		],
+		""
+	    )
+
+	    # get varible value
+	    Progress.on
+	    Progress.NextStage
+	    Progress.off
+	    domainName = Convert.to_string(SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN")))
+	    adminUser  = "Administrator"
+	    adminPw    = DialogsInst.GetPasswd()
+	    SCR.Write(path(".target.string"), "/tmp/passwd", adminPw)
+	    SCR.Execute(path(".target.bash"), "chmod 600 /tmp/passwd")
+
+	    # configure samba as AD DC
+	    Progress.on
+	    Progress.NextStage
+	    Progress.off
+	    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/oss-setup.sh --passwdf=/tmp/passwd --samba" )
+#	    Popup.Error("Nezd meg a samba beallitasokat !!!")
+
+	    # configure yast2-auth-client
+	    Progress.on
+	    Progress.NextStage
+	    Progress.off
+	    Auth::AuthConfInst.sssd_import({"conf" => {
+						"sssd" => {"config_file_version" => "2","services" => ["pam","nss"],"domains" => [ domainName ]},
+						"pam" => {},
+						"nss" => {},
+						"domain/" + domainName => {
+								"id_provider" => "ad",
+								"auth_provider" => "ad",
+								"enumerate" => "true",
+								"cache_credentials" => "false",
+								"case_sensitive" => "true",
+								"ad_server" => "localhost"}},
+					    "pam" => true,
+					    "nss" => ["passwd","group"],
+					    "enabled" => true
+					  })
+	    Auth::AuthConfInst.ad_import({"domain" => domainName, "user" => adminUser, "ou" => "", "pass" => adminPw, "overwrite_smb_conf" => false, "update_dns" => true})
+
+	    success, output = Auth::AuthConfInst.ad_join_domain
+	    if !success
+		Builtins.y2milestone("--- OSS AD domain enrollment failed! Output is: %1", output.to_s )
+		Yast::Report.Error 'AD domain enrollment failed! Output is: ' + output.to_s
+	    end
+	    Auth::AuthConfInst.sssd_apply
+#	    Popup.Error("Nezd meg az auth-client bealitasokat !!!")
+
+	    # configure initial accounts
+	    Progress.on
+	    Progress.NextStage
+	    Progress.off
+	    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/oss-setup.sh --passwdf=/tmp/passwd --accounts" )
+
+	    SCR.Execute(path(".target.bash"), "rm /tmp/passwd")
+	end
+
+	def GetPasswd
+	    UI.OpenDialog(
+		Opt(:decorated),
+		VBox(
+		     Left(Password(Id(:password), _("Administrator Password"), "") ),
+		     HBox(
+			PushButton(Id(:cancel), _("Cancel")),
+			PushButton(Id(:ok), _("OK"))
+		     )
+		)
+	    )
+	    ret = nil
+	    while true
+		event = UI.WaitForEvent
+		ret = Ops.get(event, "ID")
+		if ret == :cancel
+		    return nil
+		    break
+		end
+		if ret == :ok
+		    pass = Convert.to_string( UI.QueryWidget(Id(:password), :Value) )
+		    UI.CloseDialog
+		    return pass
+		    break
+		end
+	    end
+	    UI.CloseDialog
+	end
 
         #Some internal use only functions
         :privat
