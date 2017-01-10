@@ -280,7 +280,7 @@ module OSS
                     }
                     NetworkInterfaces.Commit
                  end #end if is_gate
-                 LanItems.modified = true
+                 LanItems.SetModified
                  Lan.Write
                  ret = :write
                  break
@@ -449,7 +449,7 @@ module OSS
 	    Progress.on
 	    Progress.NextStage
 	    Progress.off
-	    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/oss-setup.sh --passwdf=/tmp/passwd --samba" )
+	    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --samba" )
 #	    Popup.Error("Nezd meg a samba beallitasokat !!!")
 
 	    # configure yast2-auth-client
@@ -485,7 +485,7 @@ module OSS
 	    Progress.on
 	    Progress.NextStage
 	    Progress.off
-	    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/oss-setup.sh --passwdf=/tmp/passwd --accounts" )
+	    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts" )
 
 	    SCR.Execute(path(".target.bash"), "rm /tmp/passwd")
 	end
@@ -495,6 +495,7 @@ module OSS
 		Opt(:decorated),
 		VBox(
 		     Left(Password(Id(:password), _("Administrator Password"), "") ),
+		     Left(Password(Id(:password1), "", "") ),
 		     HBox(
 			PushButton(Id(:cancel), _("Cancel")),
 			PushButton(Id(:ok), _("OK"))
@@ -511,6 +512,27 @@ module OSS
 		end
 		if ret == :ok
 		    pass = Convert.to_string( UI.QueryWidget(Id(:password), :Value) )
+                    pass1 = Convert.to_string( UI.QueryWidget(Id(:password1), :Value) )
+                    if( pass != pass1 )
+                        Popup.Error(_("The two passwords do not match."))
+                        next
+                    end
+                    if( pass.gsub(/[A-Z]/,"1") == pass )
+                        Popup.Error(_("The passsword muss contains upper case letter."))
+                        next
+                    end
+                    if( pass.gsub(/[0-9]/,"a") == pass )
+                        Popup.Error(_("The passsword muss contains upper number."))
+                        next
+                    end
+                    if( pass.size < 8)
+                        Popup.Error(_("The passsword must contains minimum 8 character."))
+                        next
+                    end
+                    if( pass.size > 14)
+                        Popup.Error(_("The passsword must not contains more then 14 character."))
+                        next
+                    end
 		    UI.CloseDialog
 		    return pass
 		    break
