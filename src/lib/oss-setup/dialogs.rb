@@ -183,6 +183,7 @@ module OSS
                     end
                     SCR.Write(path(".etc.schoolserver.SCHOOL_NET_GATEWAY"), def_gw )
                  end #end if is_gate
+                 SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK_STRING"), Netmask.FromBits(nm) )
                  SCR.Write(path(".etc.schoolserver"),nil)
                  #Now let's start configuring network
                  Routing.Forward_v4 = false
