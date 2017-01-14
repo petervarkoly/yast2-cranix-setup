@@ -6,7 +6,6 @@
 
 require 'yast'
 require 'ui/dialog'
-require 'auth/authconf'
 
 Yast.import 'UI'
 Yast.import 'Icon'
@@ -23,7 +22,7 @@ module OSS
         include Logger
 
         def initialize
-            #textdomain 'OSS'
+            textdomain 'OSS'
             true
         end
 
@@ -295,42 +294,59 @@ module OSS
             Builtins.y2milestone("-- OSS-Setup BasicSetting Called --")
             # Dialog help
             help    = _("Some help for basic settings.")
-            caption = _("OSS Basic Settings.")
+            caption = _("OSS Configuration.")
             lwsnr_in_room = ["64","256", "128", "32", "16"]
             lschool_types = ['work', 'global', 'primary', 'gymnasium', 'secondary', 'real', 'special', 'administration', 'other']
             
             # Dialog contents
-            contents = HBox(
+            contents = VBox(
               HSpacing(8),
-              VBox(
-                VSpacing(3),
-                Left(InputField(Id(:schoolname), Opt(:hstretch), _("Name of the &Institute"), "NAME")),
-                VSpacing(3),
-                Left(ComboBox(Id(:type),         Opt(:hstretch), _("Selection of the Type of the Institute"), lschool_types)),
-                VSpacing(3),
-                Left(InputField(Id(:regcode),    Opt(:hstretch), _("&Registration Code"),"NOT YET REGISTERED ")),
-                VSpacing(3),
-                Left(InputField(Id(:domain),     Opt(:hstretch), _("&Domain name for the OSS."),"DNSDOMAIN")),
-                VSpacing(3),
+                Frame( _("Basic Setting"),
+                   HBox(
+                     HSpacing(8),
+                     VBox(
+			VSpacing(1),
+                        Left(InputField(Id(:schoolname), Opt(:hstretch), _("Name of the &Institute"), "NAME")),
+			VSpacing(1),
+                        Left(ComboBox(Id(:type),         Opt(:hstretch), _("Selection of the Type of the Institute"), lschool_types)),
+			VSpacing(1)
+                     ),
+                     HSpacing(8),
+	             VBox(
+			VSpacing(1),
+                        Left(InputField(Id(:regcode),    Opt(:hstretch), _("&Registration Code"),"NOT YET REGISTERED ")),
+			VSpacing(1),
+                        Left(InputField(Id(:domain),     Opt(:hstretch), _("&Domain name for the OSS."),"DNSDOMAIN")),
+			VSpacing(1)
+                     ),
+                     HSpacing(8)
+                   )
+                ),
+                VSpacing(8),
                 Frame( _("Network Setting"),
                   VBox(
+		    VSpacing(1),
                     HBox(
+                       HSpacing(8),
                        Left(ComboBox(Id(:wsnr_in_room), Opt(:hstretch), _("&Maximal number of IP-Addesses in a Room"), lwsnr_in_room)),
+                       HSpacing(8),
                        Left(CheckBox(Id(:use_dhcp), _("Enable DHCP Server"), true )),
-                       Left(CheckBox(Id(:is_gate),  _("The OSS is the Gateway"), true ))
+                       HSpacing(8),
+                       Left(CheckBox(Id(:is_gate),  _("The OSS is the Gateway"), true )),
+                       HSpacing(8)
                     ),
-                    VSpacing(3),
+		    VSpacing(1),
                     HBox(
+                       HSpacing(8),
                        ComboBox(Id(:net0),Opt(:notify),"Internal Network",["172","10","192"]),
                        ReplacePoint( Id(:rep_net1), ComboBox(Id(:net1)," ",lnet1("172",16))),
                        Label("/"),
                        ReplacePoint( Id(:rep_nm),   ComboBox(Id(:netm),Opt(:notify),_("Netmask"),lnetmask("172"))),
                        HStretch()
                     ),
-                    HSpacing(200)
+		    VSpacing(1)
                   )
-                )
-              ),
+                ),
               HSpacing(8)
             )
             
@@ -415,19 +431,17 @@ module OSS
 	    Progress.New(
 		_("Saving the Open School Server configuration"),
 		" ",
-		4,
+		3,
 		[
 		    # progress stage 1/10
 		    _("Calculate settings"),
 		    _("Configure the samba"),
-		    _("Configure the auth-client"),
 		    _("Configure the base user and group"),
 		],
 		[
 		    # progress step 1/10
 		    _("Calculate settings ..."),
 		    _("Configure the samba ..."),
-		    _("Configure the auth-client ..."),
 		    _("Configure the base user and group ..."),
 		    # progress finished
 		    _("Finished")
@@ -436,7 +450,7 @@ module OSS
 	    )
 
 	    # get varible value
-	    Progress.on
+	    Progress.set(true)
 	    Progress.NextStage
 	    Progress.off
 	    domainName = Convert.to_string(SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN")))
@@ -446,43 +460,12 @@ module OSS
 	    SCR.Execute(path(".target.bash"), "chmod 600 /tmp/passwd")
 
 	    # configure samba as AD DC
-	    Progress.on
+	    Progress.set(true)
 	    Progress.NextStage
 	    Progress.off
 	    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --samba" )
-#	    Popup.Error("Nezd meg a samba beallitasokat !!!")
 
-	    # configure yast2-auth-client
-	    Progress.on
-	    Progress.NextStage
-	    Progress.off
-	    Auth::AuthConfInst.sssd_import({"conf" => {
-						"sssd" => {"config_file_version" => "2","services" => ["pam","nss"],"domains" => [ domainName ]},
-						"pam" => {},
-						"nss" => {},
-						"domain/" + domainName => {
-								"id_provider" => "ad",
-								"auth_provider" => "ad",
-								"enumerate" => "true",
-								"cache_credentials" => "false",
-								"case_sensitive" => "true",
-								"ad_server" => "localhost"}},
-					    "pam" => true,
-					    "nss" => ["passwd","group"],
-					    "enabled" => true
-					  })
-	    Auth::AuthConfInst.ad_import({"domain" => domainName, "user" => adminUser, "ou" => "", "pass" => adminPw, "overwrite_smb_conf" => false, "update_dns" => true})
-
-	    success, output = Auth::AuthConfInst.ad_join_domain
-	    if !success
-		Builtins.y2milestone("--- OSS AD domain enrollment failed! Output is: %1", output.to_s )
-		Yast::Report.Error 'AD domain enrollment failed! Output is: ' + output.to_s
-	    end
-	    Auth::AuthConfInst.sssd_apply
-#	    Popup.Error("Nezd meg az auth-client bealitasokat !!!")
-
-	    # configure initial accounts
-	    Progress.on
+	    Progress.set(true)
 	    Progress.NextStage
 	    Progress.off
 	    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts" )
@@ -514,7 +497,7 @@ module OSS
 		    pass = Convert.to_string( UI.QueryWidget(Id(:password), :Value) )
                     pass1 = Convert.to_string( UI.QueryWidget(Id(:password1), :Value) )
                     if( pass != pass1 )
-                        Popup.Error(_("The two passwords do not match."))
+                        Popup.Error(_("The passwords do not match."))
                         next
                     end
                     if( pass.gsub(/[A-Z]/,"1") == pass )
@@ -522,7 +505,7 @@ module OSS
                         next
                     end
                     if( pass.gsub(/[0-9]/,"a") == pass )
-                        Popup.Error(_("The passsword muss contains upper number."))
+                        Popup.Error(_("The passsword muss contains numbers."))
                         next
                     end
                     if( pass.size < 8)
