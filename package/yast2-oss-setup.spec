@@ -26,6 +26,7 @@ Source:		%{name}.tar.bz2
 BuildRequires:	yast2 yast2-ruby-bindings yast2-devtools
 BuildRequires:  rubygem(yast-rake) rubygem(rspec)
 Requires:       yast2
+Requires:	oss-base
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 %description
