@@ -47,6 +47,6 @@ rake install DESTDIR=%{buildroot}
 
 %files
 %defattr(-,root,root)
-%doc ChangeLog README COPYING
+%doc README.md
 /usr/share/YaST2/clients/oss-setup.rb
 /usr/share/YaST2/lib/oss-setup/
