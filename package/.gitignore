@@ -1,2 +1,3 @@
 yast2-oss-setup-*.tar.bz2
-
+.osc/
+.osc/*
