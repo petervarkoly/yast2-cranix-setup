@@ -22,7 +22,7 @@ License:	Commercial
 Summary:	Setup for OSS
 Url:		www.openschoolserver.net
 Group:		System/YaS
-Source:		%{name}.tar.bz2
+Source:		%{name}-%{version}.tar.bz2
 BuildRequires:	yast2 yast2-ruby-bindings yast2-devtools
 BuildRequires:  rubygem(yast-rake) rubygem(rspec)
 Requires:       yast2
@@ -37,8 +37,6 @@ Setup for OSS
 %setup -q
 
 %build
-%configure
-make %{?_smp_mflags}
 
 %install
 rake install DESTDIR=%{buildroot}
