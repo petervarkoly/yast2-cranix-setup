@@ -183,7 +183,6 @@ module OSS
                     end
                     SCR.Write(path(".etc.schoolserver.SCHOOL_NET_GATEWAY"), def_gw )
                  end #end if is_gate
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK_STRING"), Netmask.FromBits(nm.to_i) )
                  SCR.Write(path(".etc.schoolserver"),nil)
                  #Now let's start configuring network
                  Routing.Forward_v4 = false
@@ -405,6 +404,7 @@ module OSS
                  SCR.Write(path(".etc.schoolserver.SCHOOL_USE_DHCP"),     Convert.to_boolean(UI.QueryWidget(Id(:use_dhcp),:Value)) ? "yes" : "no" )
                  SCR.Write(path(".etc.schoolserver.SCHOOL_WORKSTATIONS_IN_ROOM"), Convert.to_integer(UI.QueryWidget(Id(:wsnr_in_room),:Value)) )
                  SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK"),      netm )
+                 SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK_STRING"), Netmask.FromBits(netm.to_i) )
                  SCR.Write(path(".etc.schoolserver.SCHOOL_NETWORK"),      nets )
                  SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER"),       nets.chomp("0") + "2" )
                  SCR.Write(path(".etc.schoolserver.SCHOOL_MAILSERVER"),   nets.chomp("0") + "3" )
@@ -459,10 +459,7 @@ module OSS
 	    Progress.NextStage
 	    Progress.off
 	    domainName = Convert.to_string(SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN")))
-	    adminUser  = "Administrator"
-	    adminPw    = DialogsInst.GetPasswd()
-	    SCR.Write(path(".target.string"), "/tmp/passwd", adminPw)
-	    SCR.Execute(path(".target.bash"), "chmod 600 /tmp/passwd")
+	    DialogsInst.GetPasswd()
 
 	    # configure samba as AD DC
 	    Progress.set(true)
@@ -479,6 +476,11 @@ module OSS
 	end
 
 	def GetPasswd
+	    if File.exist?("/tmp/may_q_masterpass")
+	        SCR.Execute(path(".target.bash"), "mv /tmp/may_q_masterpass /tmp/passwd")
+		SCR.Execute(path(".target.bash"), "chmod 600 /tmp/passwd")
+		return
+	    end
 	    UI.OpenDialog(
 		Opt(:decorated),
 		VBox(
@@ -522,10 +524,11 @@ module OSS
                         next
                     end
 		    UI.CloseDialog
-		    return pass
+	    	    SCR.Write(path(".target.string"), "/tmp/passwd", pass)
 		    break
 		end
 	    end
+	    SCR.Execute(path(".target.bash"), "chmod 600 /tmp/passwd")
 	    UI.CloseDialog
 	end
 

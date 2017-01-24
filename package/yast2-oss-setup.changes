@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Tue Jan 24 19:41:26 UTC 2017 - peter@varkoly.de
+
+- Save SCHOOL_NETMASK_STRING at the right place
+- Make GetPasswd to use /tmp/may_q_masterpass if exists.
+- Save some new sysconfig variable.
+    SCHOOL_NETMASK_STRING
+    SCHOOL_ANON_DHCP_NET
+    SCHOOL_SERVER_NET
+    Use /var/adm/fillup-templates/sysconfig.schoolserver instead of /usr/share/oss/setup/templates/schoolserver.ini
+
+-------------------------------------------------------------------
 Mon Nov 14 17:44:42 UTC 2016 - peter@varkoly.de
 
 - Initial version of the OSS 4.0 setup 
