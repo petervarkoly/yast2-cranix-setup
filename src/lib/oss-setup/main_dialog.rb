@@ -43,7 +43,7 @@ module OSS
 			 ret = :network
                      else
                          if !File.exist?("/etc/sysconfig/schoolserver")
-                            `cp /usr/share/oss/setup/templates/schoolserver.ini /etc/sysconfig/schoolserver`
+                            `cp /var/adm/fillup-templates/sysconfig.schoolserver /etc/sysconfig/schoolserver`
                          end
                          SCR.Read(path(".etc.schoolserver"))
                          ret = :basic

@@ -183,7 +183,7 @@ module OSS
                     end
                     SCR.Write(path(".etc.schoolserver.SCHOOL_NET_GATEWAY"), def_gw )
                  end #end if is_gate
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK_STRING"), Netmask.FromBits(nm) )
+                 SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK_STRING"), Netmask.FromBits(nm.to_i) )
                  SCR.Write(path(".etc.schoolserver"),nil)
                  #Now let's start configuring network
                  Routing.Forward_v4 = false
@@ -413,11 +413,15 @@ module OSS
                  SCR.Write(path(".etc.schoolserver.SCHOOL_BACKUP_SERVER"),nets.chomp("0") + "6" )
                  case netm
                  when "24","23","22"
-                      SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP"),      nets.chomp("0") + "32" + nets.chomp("0.0") + "63" )
-                      SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"), nets.chomp("0") + "64" )
+                      SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), nets.chomp("0") + "32" + nets.chomp("0.0") + "63" )
+                      SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_NET"),   nets.chomp("0") + "32/27" )
+                      SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"),  nets.chomp("0") + "64" )
+                      SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"),      nets.chomp("0") + "0/27" )
                  else
                       SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), nets.chomp("0.0") + "1.0 " + nets.chomp("0.0") + "1.31" )
+                      SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_NET"),   nets.chomp("0.0") + "1.0/24" )
                       SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"),  nets.chomp("0.0") + "2.0" )
+                      SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"),      nets.chomp("0")   + "0/24" )
                  end
                  SCR.Write(path(".etc.schoolserver"),nil)
                  ret = :network
