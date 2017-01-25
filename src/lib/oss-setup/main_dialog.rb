@@ -62,6 +62,7 @@ module OSS
 		     break
                 end
             end
+	    return :next
         end
         
         def event_loop

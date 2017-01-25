@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jan 25 10:46:29 UTC 2017 - peter@varkoly.de
+
+- Setup dhcp too. 
+
+-------------------------------------------------------------------
 Tue Jan 24 19:41:26 UTC 2017 - peter@varkoly.de
 
 - Save SCHOOL_NETMASK_STRING at the right place
