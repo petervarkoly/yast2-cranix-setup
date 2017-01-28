@@ -228,8 +228,8 @@ module OSS
                  }
                  NetworkInterfaces.Commit
                  if SCR.Read(path(".etc.schoolserver.SCHOOL_USE_DHCP")) == "yes"
-		    SCR.Write(path(".sysconfig.dhcpd.DHCPD_INTERFACE"), intdev)
-		    SCR.Write(path(".sysconfig.dhcpd"), nil)
+                    SCR.Write(path(".sysconfig.dhcpd.DHCPD_INTERFACE"), intdev)
+                    SCR.Write(path(".sysconfig.dhcpd"), nil)
                  end
                  domain = SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN"))
                  dns_tmp = DNS.Export
@@ -305,19 +305,19 @@ module OSS
                    HBox(
                      HSpacing(8),
                      VBox(
-			VSpacing(1),
+                        VSpacing(1),
                         Left(InputField(Id(:schoolname), Opt(:hstretch), _("Name of the &Institute"), "NAME")),
-			VSpacing(1),
+                        VSpacing(1),
                         Left(ComboBox(Id(:type),         Opt(:hstretch), _("Selection of the Type of the Institute"), lschool_types)),
-			VSpacing(1)
+                        VSpacing(1)
                      ),
                      HSpacing(8),
-	             VBox(
-			VSpacing(1),
+                     VBox(
+                        VSpacing(1),
                         Left(InputField(Id(:regcode),    Opt(:hstretch), _("&Registration Code"),"NOT YET REGISTERED ")),
-			VSpacing(1),
+                        VSpacing(1),
                         Left(InputField(Id(:domain),     Opt(:hstretch), _("&Domain name for the OSS."),"DNSDOMAIN")),
-			VSpacing(1)
+                        VSpacing(1)
                      ),
                      HSpacing(8)
                    )
@@ -325,7 +325,7 @@ module OSS
                 VSpacing(8),
                 Frame( _("Network Setting"),
                   VBox(
-		    VSpacing(1),
+                    VSpacing(1),
                     HBox(
                        HSpacing(8),
                        Left(ComboBox(Id(:wsnr_in_room), Opt(:hstretch), _("&Maximal number of IP-Addesses in a Room"), lwsnr_in_room)),
@@ -335,7 +335,7 @@ module OSS
                        Left(CheckBox(Id(:is_gate),  _("The OSS is the Gateway"), true )),
                        HSpacing(8)
                     ),
-		    VSpacing(1),
+                    VSpacing(1),
                     HBox(
                        HSpacing(8),
                        ComboBox(Id(:net0),Opt(:notify),"Internal Network",["172","10","192"]),
@@ -344,7 +344,7 @@ module OSS
                        ReplacePoint( Id(:rep_nm),   ComboBox(Id(:netm),Opt(:notify),_("Netmask"),lnetmask("172"))),
                        HStretch()
                     ),
-		    VSpacing(1)
+                    VSpacing(1)
                   )
                 ),
               HSpacing(8)
@@ -431,77 +431,80 @@ module OSS
             return ret
         end
 
-	def OssSetup
+        def OssSetup
 
-	    Progress.New(
-		_("Saving the Open School Server configuration"),
-		" ",
-		3,
-		[
-		    # progress stage 1/10
-		    _("Calculate settings"),
-		    _("Configure the samba"),
-		    _("Configure the base user and group"),
-		],
-		[
-		    # progress step 1/10
-		    _("Calculate settings ..."),
-		    _("Configure the samba ..."),
-		    _("Configure the base user and group ..."),
-		    # progress finished
-		    _("Finished")
-		],
-		""
-	    )
+            Progress.New(
+                _("Saving the Open School Server configuration"),
+                " ",
+                3,
+                [
+                    # progress stage 1/10
+                    _("Calculate settings"),
+                    _("Configure the AD Server"),
+                    _("Creating the Base Users and Groups"),
+                ],
+                [
+                    # progress step 1/10
+                    _("Calculate settings ..."),
+                    _("Configure the active directory server ..."),
+                    _("Creating the Base Users and Groups ..."),
+                    # progress finished
+                    _("Finished")
+                ],
+                ""
+            )
 
-	    # get varible value
-	    Progress.set(true)
-	    Progress.NextStage
-	    Progress.off
-	    domainName = Convert.to_string(SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN")))
-	    DialogsInst.GetPasswd()
+            # get varible value
+            Progress.set(true)
+            Progress.NextStage
+            Progress.off
+            domainName = Convert.to_string(SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN")))
+            DialogsInst.GetPasswd()
 
-	    # configure samba as AD DC
-	    Progress.set(true)
-	    Progress.NextStage
-	    Progress.off
-	    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --samba" )
+            # configure samba as AD DC
+            Progress.set(true)
+            Progress.NextStage
+            Progress.off
+            SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --samba" )
 
-	    Progress.set(true)
-	    Progress.NextStage
-	    Progress.off
-	    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts --dhcp" )
+            Progress.set(true)
+            Progress.NextStage
+            Progress.off
+            if SCR.Read(path(".etc.schoolserver.SCHOOL_USE_DHCP")) == "yes"
+                    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts --dhcp" )
+            else
+                SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts" )
+            end
+            SCR.Execute(path(".target.bash"), "rm /tmp/passwd")
+        end
 
-	    SCR.Execute(path(".target.bash"), "rm /tmp/passwd")
-	end
-
-	def GetPasswd
-	    if File.exist?("/tmp/may_q_masterpass")
-	        SCR.Execute(path(".target.bash"), "mv /tmp/may_q_masterpass /tmp/passwd")
-		SCR.Execute(path(".target.bash"), "chmod 600 /tmp/passwd")
-		return
-	    end
-	    UI.OpenDialog(
-		Opt(:decorated),
-		VBox(
-		     Left(Password(Id(:password), _("Administrator Password"), "") ),
-		     Left(Password(Id(:password1), "", "") ),
-		     HBox(
-			PushButton(Id(:cancel), _("Cancel")),
-			PushButton(Id(:ok), _("OK"))
-		     )
-		)
-	    )
-	    ret = nil
-	    while true
-		event = UI.WaitForEvent
-		ret = Ops.get(event, "ID")
-		if ret == :cancel
-		    return nil
-		    break
-		end
-		if ret == :ok
-		    pass = Convert.to_string( UI.QueryWidget(Id(:password), :Value) )
+        def GetPasswd
+            if File.exist?("/tmp/may_q_masterpass")
+                SCR.Execute(path(".target.bash"), "mv /tmp/may_q_masterpass /tmp/passwd")
+                SCR.Execute(path(".target.bash"), "chmod 600 /tmp/passwd")
+                return
+            end
+            UI.OpenDialog(
+                Opt(:decorated),
+                VBox(
+                     Left(Password(Id(:password), _("Administrator Password"), "") ),
+                     Left(Password(Id(:password1), "", "") ),
+                     HBox(
+                        PushButton(Id(:cancel), _("Cancel")),
+                        PushButton(Id(:ok), _("OK"))
+                     )
+                )
+            )
+            ret = nil
+            while true
+                event = UI.WaitForEvent
+                ret = Ops.get(event, "ID")
+                if ret == :cancel
+                    return nil
+                    break
+                end
+                if ret == :ok
+                    pass = Convert.to_string( UI.QueryWidget(Id(:password), :Value) )
                     pass1 = Convert.to_string( UI.QueryWidget(Id(:password1), :Value) )
                     if( pass != pass1 )
                         Popup.Error(_("The passwords do not match."))
@@ -523,14 +526,14 @@ module OSS
                         Popup.Error(_("The passsword must not contains more then 14 character."))
                         next
                     end
-		    UI.CloseDialog
-	    	    SCR.Write(path(".target.string"), "/tmp/passwd", pass)
-		    break
-		end
-	    end
-	    SCR.Execute(path(".target.bash"), "chmod 600 /tmp/passwd")
-	    UI.CloseDialog
-	end
+                    UI.CloseDialog
+                        SCR.Write(path(".target.string"), "/tmp/passwd", pass)
+                    break
+                end
+            end
+            SCR.Execute(path(".target.bash"), "chmod 600 /tmp/passwd")
+            UI.CloseDialog
+        end
 
         #Some internal use only functions
         :privat
