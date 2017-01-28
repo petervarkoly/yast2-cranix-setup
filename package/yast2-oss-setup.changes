@@ -1,4 +1,21 @@
 -------------------------------------------------------------------
+Sat Jan 28 06:56:09 UTC 2017 - peter@varkoly.de
+
+- Remove NAME as dummy by IP-Adresses.
+- Clean up code.
+- Do not setup dhcp server when not needed.
+
+-------------------------------------------------------------------
+Wed Jan 25 10:46:29 UTC 2017 - peter@varkoly.de
+
+- Setup dhcp too. 
+
+-------------------------------------------------------------------
+Wed Jan 25 14:28:31 UTC 2017 - peter@varkoly.de
+
+- return next instead of null 
+
+-------------------------------------------------------------------
 Wed Jan 25 10:46:29 UTC 2017 - peter@varkoly.de
 
 - Setup dhcp too. 
