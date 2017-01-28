@@ -75,7 +75,7 @@ module OSS
                 VSpacing(3),
                 ReplacePoint( Id(:rep_net1),SelectionBox(Id(:intdev), _("A&vailable Network Cards:"), cards) ),
                 VSpacing(3),
-                Left(InputField(Id(:def_gw), Opt(:hstretch), _("Default Gateway"), "NAME")),
+                Left(InputField(Id(:def_gw), Opt(:hstretch), _("Default Gateway"), "")),
                 VSpacing(3)
               ),
               HSpacing(8)
@@ -91,9 +91,9 @@ module OSS
                     ReplacePoint( Id(:rep_net2),SelectionBox(Id(:extdev), _("Select the E&xternal Network Card:"), cards) ),
                     VSpacing(3),
                     HBox(
-                        Left(InputField(Id(:ext_ip), Opt(:hstretch), _("External IP"), "NAME")),
+                        Left(InputField(Id(:ext_ip), Opt(:hstretch), _("External IP"), "")),
                         Left(IntField(Id(:ext_nm),   Opt(:hstretch), _("External Netmask"), 8,24,24)),
-                        Left(InputField(Id(:def_gw), Opt(:hstretch), _("Default Gateway"), "NAME")),
+                        Left(InputField(Id(:def_gw), Opt(:hstretch), _("Default Gateway"), "")),
                     ),
                     VSpacing(3)
                   ),
