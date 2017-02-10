@@ -471,9 +471,9 @@ module OSS
             Progress.NextStage
             Progress.off
             if SCR.Read(path(".etc.schoolserver.SCHOOL_USE_DHCP")) == "yes"
-                    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts --dhcp" )
+                    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts --dhcp --postsetup" )
             else
-                SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts" )
+                SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts --postsetup" )
             end
             SCR.Execute(path(".target.bash"), "rm /tmp/passwd")
         end
