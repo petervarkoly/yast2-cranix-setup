@@ -470,7 +470,7 @@ module OSS
 	    Progress.set(true)
 	    Progress.NextStage
 	    Progress.off
-	    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts --dhcp" )
+	    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts --dhcp --postsetup" )
 
 	    SCR.Execute(path(".target.bash"), "rm /tmp/passwd")
 	end
