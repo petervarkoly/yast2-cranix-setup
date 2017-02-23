@@ -447,7 +447,7 @@ module OSS
                     # progress step 1/10
                     _("Calculate settings ..."),
                     _("Configure the active directory server ..."),
-                    _("Creating the Base Users and Groups ..."),
+                    _("Creating the base Users and Groups ..."),
                     # progress finished
                     _("Finished")
                 ],
