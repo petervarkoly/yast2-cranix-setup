@@ -441,7 +441,7 @@ module OSS
                     # progress stage 1/10
                     _("Calculate settings"),
                     _("Configure the AD Server"),
-                    _("Creating the Base Users and Groups"),
+                    _("Creating the base Users and Groups"),
                 ],
                 [
                     # progress step 1/10
