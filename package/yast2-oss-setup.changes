@@ -1,6 +1,9 @@
 -------------------------------------------------------------------
-<<<<<<< HEAD
-=======
+Thu Feb 23 15:35:40 UTC 2017 - peter@varkoly.de
+
+- Start the postsetup script too. 
+
+-------------------------------------------------------------------
 Sat Jan 28 06:56:09 UTC 2017 - peter@varkoly.de
 
 - Remove NAME as dummy by IP-Adresses.
@@ -13,7 +16,6 @@ Wed Jan 25 10:46:29 UTC 2017 - peter@varkoly.de
 - Setup dhcp too. 
 
 -------------------------------------------------------------------
->>>>>>> 9d4dbac3e1fd6c543bddc300351d464684665eda
 Wed Jan 25 14:28:31 UTC 2017 - peter@varkoly.de
 
 - return next instead of null 
