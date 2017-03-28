@@ -1,3 +1,7 @@
+# encoding: utf-8
+# ------------------------------------------------------------------------------
+# Copyright (c) 2017 Dipl. Ing. Peter Varkoly, Nuernberg, Germany.
+
 module Yast
   class InstOssSetup < Client
     def main
