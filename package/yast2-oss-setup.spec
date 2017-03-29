@@ -48,6 +48,6 @@ rake install DESTDIR=%{buildroot}
 %files
 %defattr(-,root,root)
 %doc README.md
-/usr/share/YaST2/clients/oss-setup.rb
+/usr/share/YaST2/clients/
 /usr/share/YaST2/lib/oss-setup/
 /usr/share/YaST2/scrconf/etc_schoolserver.scr
