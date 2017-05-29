@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+Tue Mar 28 15:58:58 UTC 2017 - peter@varkoly.de
+
+- 676898d1a3062e55c878748dfcc03dbc4b44a52e
+  o inst_oss-setup.rb
+    Start oss-setup after manuell installation too.
+
+-------------------------------------------------------------------
+Sat Mar 11 15:47:42 UTC 2017 - peter@varkoly.de
+
+- Use admin as name instaead of schooladmin. 
+  o dialogs.rb
+
+-------------------------------------------------------------------
 Thu Feb 23 15:35:40 UTC 2017 - peter@varkoly.de
 
 - Start the postsetup script too. 
