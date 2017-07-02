@@ -295,7 +295,6 @@ module OSS
             # Dialog help
             help    = _("Some help for basic settings.")
             caption = _("OSS Configuration.")
-            lwsnr_in_room = ["64","256", "128", "32", "16"]
             lschool_types = ['work', 'global', 'primary', 'gymnasium', 'secondary', 'real', 'special', 'administration', 'other']
             
             # Dialog contents
@@ -328,21 +327,19 @@ module OSS
                     VSpacing(1),
                     HBox(
                        HSpacing(8),
-                       Left(ComboBox(Id(:wsnr_in_room), Opt(:hstretch), _("&Maximal number of IP-Addesses in a Room"), lwsnr_in_room)),
-                       HSpacing(8),
-                       Left(CheckBox(Id(:use_dhcp), _("Enable DHCP Server"), true )),
-                       HSpacing(8),
-                       Left(CheckBox(Id(:is_gate),  _("The OSS is the Gateway"), true )),
-                       HSpacing(8)
-                    ),
-                    VSpacing(1),
-                    HBox(
-                       HSpacing(8),
                        ComboBox(Id(:net0),Opt(:notify),"Internal Network",["172","10","192"]),
                        ReplacePoint( Id(:rep_net1), ComboBox(Id(:net1)," ",lnet1("172",16))),
                        Label("/"),
                        ReplacePoint( Id(:rep_nm),   ComboBox(Id(:netm),Opt(:notify),_("Netmask"),lnetmask("172"))),
                        HStretch()
+                    ),
+                    VSpacing(1),
+                    HBox(
+                       HSpacing(8),
+                       Left(CheckBox(Id(:use_dhcp), _("Enable DHCP Server"), true )),
+                       HSpacing(8),
+                       Left(CheckBox(Id(:is_gate),  _("The OSS is the Gateway"), true )),
+                       HSpacing(8)
                     ),
                     VSpacing(1)
                   )
