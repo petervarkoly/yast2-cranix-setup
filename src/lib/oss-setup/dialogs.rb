@@ -240,15 +240,28 @@ module OSS
                  DNS.Import(dns_tmp)
                  DNS.modified = true
 
-                 host_tmp = Host.Export
-                 Ops.set(host_tmp, "hosts", {
-                                        ip     => ["admin." + domain + " admin"],
-                                        mail   => ["mailserver."  + domain + " mailserver" ],
-                                        prin   => ["printserver." + domain + " printserver" ],
-                                        prox   => ["proxy."       + domain + " proxy" ],
-                                        backup => ["backup."      + domain + " backup" ],
-                                   })
-                 Host.Import(host_tmp)
+# It is buggy
+#                host_tmp = Host.Export
+#                if is_gate
+#                  Ops.set(host_tmp, "hosts", {
+#                                       ip     => ["admin." + domain + " admin"],
+#                                       mail   => ["mailserver."  + domain + " mailserver" ],
+#                                       prin   => ["printserver." + domain + " printserver" ],
+#                                       prox   => ["proxy."       + domain + " proxy" ],
+#                                       backup => ["backup."      + domain + " backup" ],
+#       				ext_ip => ["extip"],
+#					216.239.32.20  => [ "www.google.de","www.google.com","www.google.fr","www.google.it","www.google.hu","www.google.en" ]
+#                                  })
+#                else
+#                  Ops.set(host_tmp, "hosts", {
+#                                       ip     => ["admin." + domain + " admin"],
+#                                       mail   => ["mailserver."  + domain + " mailserver" ],
+#                                       prin   => ["printserver." + domain + " printserver" ],
+#                                       prox   => ["proxy."       + domain + " proxy" ],
+#                                       backup => ["backup."      + domain + " backup" ],
+#					216.239.32.20  => [ "www.google.de","www.google.com","www.google.fr","www.google.it","www.google.hu","www.google.en" ]
+#                                  })
+#                Host.Import(host_tmp)
 
                  if is_gate
                     _FW = SuSEFirewall.Export
@@ -281,6 +294,32 @@ module OSS
                  end #end if is_gate
                  LanItems.SetModified
                  Lan.Write
+#
+#
+host_tmp = "#
+# hosts         This file describes a number of hostname-to-address
+#               mappings for the TCP/IP subsystem.  It is mostly
+#               used at boot time, when no name servers are running.
+#               On small systems, this file can be used instead of a
+#               \"named\" name server.
+# Syntax:
+#
+# IP-Address  Full-Qualified-Hostname  Short-Hostname
+#
+
+127.0.0.1       localhost
+"+ ip     + "   admin." + domain + " admin
+"+ mail   + "   mailserver."  + domain + " mailserver
+"+ prin   + "   printserver." + domain + " printserver
+"+ prox   + "   proxy."       + domain + " proxy
+"+ backup + "   backup."      + domain + " backup
+216.239.32.20  www.google.de www.google.com www.google.fr www.google.it www.google.hu www.google.en
+"
+		 if is_gate
+			host_tmp = host_tmp + ext_ip + " extip
+"
+		 end
+		 File.write("/etc/hosts",host_tmp)
                  ret = :write
                  break
               end #end when :next
