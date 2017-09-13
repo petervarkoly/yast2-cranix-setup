@@ -8,11 +8,12 @@ require 'yast'
 require 'ui/dialog'
 require 'oss-setup/dialogs'
 
-Yast.import 'UI'
 Yast.import 'Icon'
 Yast.import 'Label'
-Yast.import 'Popup'
 Yast.import 'Lan'
+Yast.import 'Popup'
+Yast.import 'Package'
+Yast.import 'UI'
 Yast.import 'Wizard'
 
 module OSS
@@ -55,6 +56,7 @@ module OSS
                 when :write
 		     SCR.Write(path(".etc.schoolserver"),nil)
 		     ret = DialogsInst.OssSetup()
+		     Package.DoInstall(["oss-clone"])
 		     break
                 when :abort, :cancel
 		     break
