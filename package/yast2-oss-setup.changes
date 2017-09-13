@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Sun Jul  9 10:33:29 UTC 2017 - peter@varkoly.de
+
+- 64a07f750f50764923df59158d7c44b50b8678f7 (HEAD -> openLeap-42.3)
+  o  Because of a bug in yast2 Host.rb module we write the confgiuration manually.
+
+-------------------------------------------------------------------
 Sun Jul  2 12:18:59 UTC 2017 - peter@varkoly.de
 
 - 54433be7f8625d7464da4fe89c24949f1fbcd4f3
