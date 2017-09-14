@@ -56,7 +56,7 @@ module OSS
                 when :write
 		     SCR.Write(path(".etc.schoolserver"),nil)
 		     ret = DialogsInst.OssSetup()
-		     Package.DoInstall(["oss-clone"])
+		     #Package.DoInstall(["oss-clone"])
 		     break
                 when :abort, :cancel
 		     break
