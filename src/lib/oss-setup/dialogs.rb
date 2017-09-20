@@ -233,7 +233,8 @@ module OSS
                  end
                  domain = SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN"))
                  dns_tmp = DNS.Export
-                 Ops.set(dns_tmp, "hostname",    "admin" )
+                 serverName = SCR.Read(path(".etc.schoolserver.SCHOOL_NETBIOSNAME")) 
+                 Ops.set(dns_tmp, "hostname",    serverName )
                  Ops.set(dns_tmp, "domain",      domain )
                  Ops.set(dns_tmp, "nameservers", [ "127.0.0.1" ] )
                  Ops.set(dns_tmp, "searchlist",  [domain] )
@@ -308,7 +309,7 @@ host_tmp = "#
 #
 
 127.0.0.1       localhost
-"+ ip     + "   admin." + domain + " admin
+"+ ip     + "   "+ serverName + "." + domain + " " + serverName +"
 "+ mail   + "   mailserver."  + domain + " mailserver
 "+ prin   + "   printserver." + domain + " printserver
 "+ prox   + "   proxy."       + domain + " proxy
