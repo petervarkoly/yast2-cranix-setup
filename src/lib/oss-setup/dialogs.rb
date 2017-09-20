@@ -245,7 +245,7 @@ module OSS
 #                host_tmp = Host.Export
 #                if is_gate
 #                  Ops.set(host_tmp, "hosts", {
-#                                       ip     => ["admin." + domain + " admin"],
+#                                       ip     => [ serverName + "." + domain + " " + serverName],
 #                                       mail   => ["mailserver."  + domain + " mailserver" ],
 #                                       prin   => ["printserver." + domain + " printserver" ],
 #                                       prox   => ["proxy."       + domain + " proxy" ],
@@ -255,7 +255,7 @@ module OSS
 #                                  })
 #                else
 #                  Ops.set(host_tmp, "hosts", {
-#                                       ip     => ["admin." + domain + " admin"],
+#                                       ip     => [ serverName + "." + domain + " " + serverName],
 #                                       mail   => ["mailserver."  + domain + " mailserver" ],
 #                                       prin   => ["printserver." + domain + " printserver" ],
 #                                       prox   => ["proxy."       + domain + " proxy" ],
@@ -309,7 +309,7 @@ host_tmp = "#
 #
 
 127.0.0.1       localhost
-"+ ip     + "   "+ serverName + "." + domain + " " + serverName +"
+"+ ip     + "   "+ serverName + "." + domain + " " + serverName + " 
 "+ mail   + "   mailserver."  + domain + " mailserver
 "+ prin   + "   printserver." + domain + " printserver
 "+ prox   + "   proxy."       + domain + " proxy
@@ -495,7 +495,6 @@ host_tmp = "#
             Progress.set(true)
             Progress.NextStage
             Progress.off
-            domainName = Convert.to_string(SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN")))
             DialogsInst.GetPasswd()
 
             # configure samba as AD DC
@@ -538,7 +537,6 @@ host_tmp = "#
                 ret = Ops.get(event, "ID")
                 if ret == :cancel
                     return nil
-                    break
                 end
                 if ret == :ok
                     pass = Convert.to_string( UI.QueryWidget(Id(:password), :Value) )
