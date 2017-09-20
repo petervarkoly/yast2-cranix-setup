@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Sep 13 11:30:35 UTC 2017 - peter@varkoly.de
+
+- ef9e65af4dc129148f708a02fdaa8df088f0b863
+  o Install oss-clone.
+      main_dialog.rb
+
+-------------------------------------------------------------------
 Sun Jul  9 10:33:29 UTC 2017 - peter@varkoly.de
 
 - 64a07f750f50764923df59158d7c44b50b8678f7 (HEAD -> openLeap-42.3)
