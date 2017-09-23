@@ -13,6 +13,7 @@ Yast.import 'Label'
 Yast.import 'Lan'
 Yast.import 'Popup'
 Yast.import 'Package'
+Yast.import 'Service'
 Yast.import 'UI'
 Yast.import 'Wizard'
 
@@ -56,7 +57,9 @@ module OSS
                 when :write
 		     SCR.Write(path(".etc.schoolserver"),nil)
 		     ret = DialogsInst.OssSetup()
-		     #Package.DoInstall(["oss-clone"])
+		     Package.DoInstall(["oss-clone"])
+                     Service.Enable("xinetd")
+                     Service.Enable("vsftpd")
 		     break
                 when :abort, :cancel
 		     break
