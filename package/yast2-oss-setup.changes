@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Sat Sep 23 13:38:54 UTC 2017 - peter@varkoly.de
+
+- 470cd408202d7910a82073b9355756d8e243506c
+    Install oss-clone and enable xinetd and vsftpd services. 
+
+-------------------------------------------------------------------
 Wed Sep 20 13:51:38 UTC 2017 - peter@varkoly.de
 
 -  780416c574318ca604f4c0bc81768fc700d521d2 
