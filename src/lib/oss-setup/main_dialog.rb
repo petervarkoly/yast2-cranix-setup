@@ -57,7 +57,7 @@ module OSS
                 when :write
 		     SCR.Write(path(".etc.schoolserver"),nil)
 		     ret = DialogsInst.OssSetup()
-		     Package.DoInstall(["oss-clone"])
+		     Package.DoInstall(["oss-clone","oss-proxy"])
                      Service.Enable("xinetd")
                      Service.Enable("vsftpd")
 		     break

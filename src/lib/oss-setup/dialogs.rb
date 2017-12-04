@@ -471,7 +471,7 @@ host_tmp = "#
         def OssSetup
 
             Progress.New(
-                _("Saving the Open School Server configuration"),
+                _("Saving the OSS configuration"),
                 " ",
                 3,
                 [
