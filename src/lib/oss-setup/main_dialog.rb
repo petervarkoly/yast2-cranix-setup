@@ -60,6 +60,7 @@ module OSS
 		     Package.DoInstall(["oss-clone","oss-proxy"])
                      Service.Enable("xinetd")
                      Service.Enable("vsftpd")
+                     Service.Enable("squid")
 		     break
                 when :abort, :cancel
 		     break
