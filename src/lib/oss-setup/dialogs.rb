@@ -567,7 +567,7 @@ host_tmp = "#
                 end
             end
             SCR.Execute(path(".target.bash"), "chmod 600 /tmp/passwd")
-            UI.CloseDialog
+            #UI.CloseDialog
         end
 
         #Some internal use only functions
