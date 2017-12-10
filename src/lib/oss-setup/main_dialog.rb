@@ -61,6 +61,8 @@ module OSS
                      Service.Enable("xinetd")
                      Service.Enable("vsftpd")
                      Service.Enable("squid")
+                     Service.Enable("oss-api")
+                     Service.Enable("sshd")
 		     break
                 when :abort, :cancel
 		     break
