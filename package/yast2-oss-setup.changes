@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Dec 18 11:55:43 UTC 2017 - peter@varkoly.de
+
+- b6cfef28f572ed4a26f66cfc6c1548005824ce40
+   Add new client to check if the update preparation script was created succesfully.
+ 
+
+-------------------------------------------------------------------
 Sun Dec 10 19:24:14 UTC 2017 - peter@varkoly.de
 
 - d21cc4ea2ab8cbc34e41d6a8298f42e042777111
