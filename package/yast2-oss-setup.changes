@@ -1,9 +1,14 @@
 -------------------------------------------------------------------
+Tue Feb  6 16:16:45 UTC 2018 - peter@varkoly.de
+
+-  0d0bca57dbe87edcaab21e28de7109452c3cbb2c
+    Use the fillup only macro in oss-base.
+
+-------------------------------------------------------------------
 Mon Dec 18 11:55:43 UTC 2017 - peter@varkoly.de
 
 - b6cfef28f572ed4a26f66cfc6c1548005824ce40
    Add new client to check if the update preparation script was created succesfully.
- 
 
 -------------------------------------------------------------------
 Sun Dec 10 19:24:14 UTC 2017 - peter@varkoly.de
