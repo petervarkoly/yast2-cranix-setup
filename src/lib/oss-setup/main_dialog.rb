@@ -44,7 +44,6 @@ module OSS
                          SCR.Read(path(".etc.schoolserver"))
 			 ret = :network
                      else
-                         `cp /var/adm/fillup-templates/sysconfig.schoolserver /etc/sysconfig/schoolserver`
                          SCR.Read(path(".etc.schoolserver"))
                          ret = :basic
                      end
