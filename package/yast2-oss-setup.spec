@@ -51,3 +51,4 @@ rake install DESTDIR=%{buildroot}
 /usr/share/YaST2/clients/
 /usr/share/YaST2/lib/oss-setup/
 /usr/share/YaST2/scrconf/etc_schoolserver.scr
+/usr/share/YaST2/scrconf/etc_dhcpd.scr

@@ -1,0 +1,8 @@
+#
+
+.etc.dhcpd
+
+`ag_ini(
+  `SysConfigFile("/etc/sysconfig/dhcpd")
+)
+
