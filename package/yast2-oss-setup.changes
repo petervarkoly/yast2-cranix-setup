@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Feb 15 14:49:32 UTC 2018 - peter@varkoly.de
+
+- bb7698935f867a220d18b3f164c66394032cf407
+  o main_dialog.rb
+    Code clean up.
+    Install different packages for schoolserver cephalix and business server. 
+
+-------------------------------------------------------------------
 Sat Feb 10 11:58:42 UTC 2018 - peter@varkoly.de
 
 - feaa29051045b6a26996f89c862a7e792cf09505

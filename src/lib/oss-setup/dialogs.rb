@@ -335,7 +335,7 @@ host_tmp = "#
             # Dialog help
             help    = _("Some help for basic settings.")
             caption = _("OSS Configuration.")
-            lschool_types = ['work', 'global', 'primary', 'gymnasium', 'secondary', 'real', 'special', 'administration', 'other']
+            lschool_types = [ 'work', 'global', 'primary', 'gymnasium', 'secondary', 'real', 'special', 'administration', 'other', 'business', 'cephalix' ]
             
             # Dialog contents
             contents = VBox(
