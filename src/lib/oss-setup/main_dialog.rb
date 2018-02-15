@@ -42,7 +42,7 @@ module OSS
                      if DialogsInst.ReadBackupDialog()
                          @readBackup = true 
                          SCR.Read(path(".etc.schoolserver"))
-			 ret = :network
+                         ret = :network
                      else
                          SCR.Read(path(".etc.schoolserver"))
                          ret = :basic
@@ -54,20 +54,35 @@ module OSS
                 when :network
                      ret = DialogsInst.CardDialog()
                 when :write
-		     SCR.Write(path(".etc.schoolserver"),nil)
-		     ret = DialogsInst.OssSetup()
-		     Package.DoInstall(["oss-clone","oss-proxy"])
+                     SCR.Write(path(".etc.schoolserver"),nil)
+                     to_install = []
+                     to_remove  = []
+                     case SCR.Read(path(".etc.schoolserver.SCHOOL_TYPE"))
+                        when "cephalix"
+                           to_install << cephalix-api
+                           to_install << cephalix-web
+                           to_remove  << oss-web
+                           to_remove  << oss-api
+                        when "business"
+                           to_install << ubs-api
+                           to_install << ubs-web
+                           to_remove  << oss-web
+                           to_remove  << oss-api
+                     end
+                     Package.DoInstallAndRemove(to_install,to_remove)
+                     ret = DialogsInst.OssSetup()
+                     Package.DoInstall(["oss-clone","oss-proxy"])
                      Service.Enable("xinetd")
                      Service.Enable("vsftpd")
                      Service.Enable("squid")
                      Service.Enable("oss-api")
                      Service.Enable("sshd")
-		     break
+                     break
                 when :abort, :cancel
-		     break
+                     break
                 end
             end
-	    return :next
+            return :next
         end
         
         def event_loop
