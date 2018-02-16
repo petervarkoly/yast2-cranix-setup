@@ -64,10 +64,8 @@ module OSS
                            to_remove  << oss-web
                            to_remove  << oss-api
                         when "business"
-                           to_install << ubs-api
                            to_install << ubs-web
                            to_remove  << oss-web
-                           to_remove  << oss-api
                      end
                      Package.DoInstallAndRemove(to_install,to_remove)
                      ret = DialogsInst.OssSetup()
