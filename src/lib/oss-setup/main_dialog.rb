@@ -59,13 +59,13 @@ module OSS
                      to_remove  = []
                      case SCR.Read(path(".etc.schoolserver.SCHOOL_TYPE"))
                         when "cephalix"
-                           to_install << cephalix-api
-                           to_install << cephalix-web
-                           to_remove  << oss-web
-                           to_remove  << oss-api
+                           to_install << "cephalix-api"
+                           to_install << "cephalix-web"
+                           to_remove  << "oss-web"
+                           to_remove  << "oss-api"
                         when "business"
-                           to_install << ubs-web
-                           to_remove  << oss-web
+                           to_install << "ubs-web"
+                           to_remove  << "oss-web"
                      end
                      Package.DoInstallAndRemove(to_install,to_remove)
                      ret = DialogsInst.OssSetup()
