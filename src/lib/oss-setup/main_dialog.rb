@@ -56,18 +56,19 @@ module OSS
                 when :write
                      SCR.Write(path(".etc.schoolserver"),nil)
                      to_install = []
-                     to_remove  = []
-                     case SCR.Read(path(".etc.schoolserver.SCHOOL_TYPE"))
-                        when "cephalix"
-                           to_install << "cephalix-api"
-                           to_install << "cephalix-web"
-                           to_remove  << "oss-web"
-                           to_remove  << "oss-api"
-                        when "business"
+                     if SCR.Read(path(".etc.schoolserver.SCHOOL_TYPE")) == "cephalix"
+                        to_install << "cephalix-java"
+                        to_install << "cephalix-web"
+                     else
+                        if Package.PackageAvailable("oss-web")
+                           to_install << "oss-web"
+                           to_install << "oss-java"
+                        else
                            to_install << "ubs-web"
-                           to_remove  << "oss-web"
+                           to_install << "ubs-java"
+                        end
                      end
-                     Package.DoInstallAndRemove(to_install,to_remove)
+                     Package.DoInstall(to_install)
                      ret = DialogsInst.OssSetup()
                      Package.DoInstall(["oss-clone","oss-proxy"])
                      Service.Enable("xinetd")

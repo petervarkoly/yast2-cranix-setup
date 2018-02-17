@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Sat Feb 17 10:22:08 UTC 2018 - peter@varkoly.de
+
+- The web and java components will be installed only after selecting
+  the type of the institute. Depending on the availability of
+  oss-web the oss or ubs packages will be installed
+
+-------------------------------------------------------------------
 Sat Feb 17 09:24:31 UTC 2018 - peter@varkoly.de
 
 - Fix typo.
