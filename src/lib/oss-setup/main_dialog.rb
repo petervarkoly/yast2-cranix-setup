@@ -59,6 +59,7 @@ module OSS
                      if SCR.Read(path(".etc.schoolserver.SCHOOL_TYPE")) == "cephalix"
                         to_install << "cephalix-java"
                         to_install << "cephalix-web"
+                        to_install << "cephalix-base"
                      else
                         if Package.PackageAvailable("oss-web")
                            to_install << "oss-web"
