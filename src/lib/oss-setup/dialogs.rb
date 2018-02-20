@@ -22,7 +22,7 @@ module OSS
         include Logger
 
         def initialize
-            textdomain 'OSS'
+            textdomain 'oss'
             true
         end
 
@@ -30,13 +30,13 @@ module OSS
           Builtins.y2milestone("-- OSS-Setup ReadBackupDialog Called --")
           backup = Popup.YesNoHeadline(
             _("Do you want to read the configuration of another OSS?"),
-            _("You can save the /etc/sysconfig/schoolserver file from another OSS without path on an USB-stick.\n") +
+            _("You can save the /etc/sysconfig/schoolserver file from another OSS without path on an USB media.\n") +
             _("If you have created a backup from an OSS this backup also contains this file.\n") +
             _("If the backup is on an external HD, you can connect this HD to allow the OSS to read the configuration.\n")
           )
           return false if !backup
           while true
-            if !Popup.ContinueCancel(_("Please insert the USB-stick with the configuration file!"))
+            if !Popup.ContinueCancel(_("Please insert the USB media with the configuration file!"))
               break
             end
             if FindSysconfigFile()
@@ -59,13 +59,13 @@ module OSS
             cards = read_net_cards("")
             # Dialog help
             help = _("Select the Network Card for the OSS and enter the IP-Address of the Default Gateway.") +
-                          _("If yo can not identify the cards push or remove network cabel from a device.") + 
+                   _("If yo can not identify the cards push or remove network cabel from a device.") + 
                    _("After them you can push 'Reload Network Cards' and you can see the changes if the device is connected.")
             is_gate = SCR.Read(path(".etc.schoolserver.SCHOOL_ISGATE")) == "yes" ? true : false
             if is_gate
                help = _("Select the Network Cards for OSS.")
-                          _("If yo can not identify the cards push or remove network cabel from a device.") + 
-                   _("After them you can push 'Reload Network Cards' and you can see the changes if the device is connected.")
+                      _("If yo can not identify the cards push or remove network cabel from a device.") + 
+                      _("After them you can push 'Reload Network Cards' and you can see the changes if the device is connected.")
             end
             
             # Dialog contents
@@ -177,7 +177,7 @@ module OSS
                     SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_EXT_NETMASK"), ext_nm )
                  else
                     if !IsInNetwork(ip,Netmask.FromBits(nm.to_i),def_gw)
-                       Popup.Error(_("The IP address for the gateway is not in the school network."))
+                       Popup.Error(_("The IP address for the gateway is not in the internal network."))
                        UI.SetFocus(Id(:def_gw))
                        next
                     end
@@ -546,11 +546,11 @@ host_tmp = "#
                         next
                     end
                     if( pass.gsub(/[A-Z]/,"1") == pass )
-                        Popup.Error(_("The passsword muss contains upper case letter."))
+                        Popup.Error(_("The passsword must contains upper case letter."))
                         next
                     end
                     if( pass.gsub(/[0-9]/,"a") == pass )
-                        Popup.Error(_("The passsword muss contains numbers."))
+                        Popup.Error(_("The passsword must contains numbers."))
                         next
                     end
                     if( pass.size < 8)

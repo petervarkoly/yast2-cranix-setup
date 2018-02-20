@@ -25,7 +25,7 @@ module OSS
         include Logger
 
         def initialize
-            textdomain 'OSS'
+            textdomain 'oss'
             Builtins.y2milestone("initialize OSS started")
             @readBackup = false
             Wizard.OpenNextBackStepsDialog()
