@@ -335,8 +335,25 @@ host_tmp = "#
             # Dialog help
             help    = _("Some help for basic settings.")
             caption = _("OSS Configuration.")
-            lschool_types = [ 'work', 'global', 'primary', 'gymnasium', 'secondary', 'real', 'special', 'administration', 'other', 'business', 'cephalix' ]
-            
+            instTypes = {
+                "work"           => _("work"),
+                "global"         => _("Global School"),
+                "primary"        => _("Primary School"),
+                "gymnasium"      => _("Gymnasium"),
+                "secondary"      => _("Secondary School"),
+                "real"           => _("real"),
+                "special"        => _("Special School"),
+                "other"          => _("Other School Type"),
+                "administration" => _("Administration"),
+                "business"       => _("Company"),
+                "cephalix"       => _("CEPHALIX")
+            }
+
+            itemlist = []
+            Builtins.foreach(@whatString2Label) do |k, v|
+              itemlist = Builtins.add(itemlist, Item(Id(k), v))
+            end
+
             # Dialog contents
             contents = VBox(
               HSpacing(8),
@@ -347,7 +364,7 @@ host_tmp = "#
                         VSpacing(1),
                         Left(InputField(Id(:schoolname), Opt(:hstretch), _("Name of the &Institute"), "NAME")),
                         VSpacing(1),
-                        Left(ComboBox(Id(:type),         Opt(:hstretch), _("Selection of the Type of the Institute"), lschool_types)),
+                        Left(ComboBox(Id(:type),         Opt(:hstretch), _("Selection of the Type of the Institute"), itemlist)),
                         VSpacing(1)
                      ),
                      HSpacing(8),
