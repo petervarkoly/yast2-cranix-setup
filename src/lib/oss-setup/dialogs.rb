@@ -350,7 +350,7 @@ host_tmp = "#
             }
 
             itemlist = []
-            Builtins.foreach(@whatString2Label) do |k, v|
+            Builtins.foreach(instTypes) do |k, v|
               itemlist = Builtins.add(itemlist, Item(Id(k), v))
             end
 
