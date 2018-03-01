@@ -467,7 +467,7 @@ host_tmp = "#
                  SCR.Write(path(".etc.schoolserver.SCHOOL_BACKUP_SERVER"),nets.chomp("0") + "6" )
                  case netm
                  when "24","23","22"
-                      SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), nets.chomp("0") + "32" + nets.chomp("0.0") + "63" )
+                      SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), nets.chomp("0") + "32 " + nets.chomp("0.0") + "63" )
                       SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_NET"),   nets.chomp("0") + "32/27" )
                       SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"),  nets.chomp("0") + "64" )
                       SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"),      nets.chomp("0") + "0/27" )
