@@ -228,8 +228,8 @@ module OSS
                  }
                  NetworkInterfaces.Commit
                  if SCR.Read(path(".etc.schoolserver.SCHOOL_USE_DHCP")) == "yes"
-                    SCR.Write(path(".sysconfig.dhcpd.DHCPD_INTERFACE"), intdev)
-                    SCR.Write(path(".sysconfig.dhcpd"), nil)
+                    SCR.Write(path(".etc.dhcpd.DHCPD_INTERFACE"), intdev)
+                    SCR.Write(path(".etc.dhcpd"), nil)
                  end
                  domain = SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN"))
                  dns_tmp = DNS.Export
