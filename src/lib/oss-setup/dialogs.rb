@@ -450,6 +450,12 @@ host_tmp = "#
                     UI.SetFocus(Id(:domain))
                     next
                  end
+		 if domain.match('\.local$') 
+                    msg = Builtins.sformat(_("'%1' is an invalid Domain Name. Use something like school.edu."), domain)
+                    Popup.Error(msg)
+                    UI.SetFocus(Id(:domain))
+                    next
+                 end
                  SCR.Write(path(".etc.schoolserver.SCHOOL_NAME"),         Convert.to_string(UI.QueryWidget(Id(:schoolname),:Value)))
                  SCR.Write(path(".etc.schoolserver.SCHOOL_DOMAIN"),       domain )
                  SCR.Write(path(".etc.schoolserver.SCHOOL_REG_CODE"),     Convert.to_string(UI.QueryWidget(Id(:regcode),:Value)))
