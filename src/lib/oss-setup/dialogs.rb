@@ -458,6 +458,7 @@ host_tmp = "#
                  end
                  SCR.Write(path(".etc.schoolserver.SCHOOL_NAME"),         Convert.to_string(UI.QueryWidget(Id(:schoolname),:Value)))
                  SCR.Write(path(".etc.schoolserver.SCHOOL_DOMAIN"),       domain )
+                 SCR.Write(path(".etc.schoolserver.SCHOOL_WORKGROUP"),    domain.split(".")[0].upcase )
                  SCR.Write(path(".etc.schoolserver.SCHOOL_REG_CODE"),     Convert.to_string(UI.QueryWidget(Id(:regcode),:Value)))
                  SCR.Write(path(".etc.schoolserver.SCHOOL_TYPE"),         Convert.to_string(UI.QueryWidget(Id(:type),:Value)))
                  SCR.Write(path(".etc.schoolserver.SCHOOL_ISGATE"),       Convert.to_boolean(UI.QueryWidget(Id(:is_gate),:Value)) ? "yes" : "no" )
