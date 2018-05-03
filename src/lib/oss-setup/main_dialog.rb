@@ -54,22 +54,23 @@ module OSS
                 when :network
                      ret = DialogsInst.CardDialog()
                 when :write
-                     SCR.Write(path(".etc.schoolserver"),nil)
                      to_install = []
-                     if SCR.Read(path(".etc.schoolserver.SCHOOL_TYPE")) == "cephalix"
-                        to_install << "cephalix-java"
-                        to_install << "cephalix-web"
-                        to_install << "cephalix-base"
-                     else
-                        if Package.PackageAvailable("oss-web")
-                           to_install << "oss-web"
-                           to_install << "oss-java"
+                     if OSRelease.ReleaseName == 'CRANIX'
+                        if SCR.Read(path(".etc.schoolserver.SCHOOL_TYPE")) == "cephalix"
+                           to_install << "cephalix-java"
+                           to_install << "cephalix-web"
+                           to_install << "cephalix-base"
                         else
                            to_install << "ubs-web"
                            to_install << "ubs-java"
                         end
+                     else
+                        to_install << "oss-web"
+                        to_install << "oss-java"
                      end
+		     Builtins.y2milestone("Base packages to install %1", to_install )
                      Package.DoInstall(to_install)
+		     Builtins.y2milestone("Base packages was installed.")
                      ret = DialogsInst.OssSetup()
                      Package.DoInstall(["oss-clone","oss-proxy"])
                      Service.Enable("xinetd")

@@ -13,6 +13,7 @@ Yast.import 'Label'
 Yast.import 'Popup'
 Yast.import 'Netmask'
 Yast.import 'IP'
+Yast.import "OSRelease"
 
 module OSS
     class Dialogs
@@ -109,7 +110,11 @@ module OSS
               _("Reload Network Cards"),
               Label.NextButton
             )
-            UI.SetFocus(Id(:next))
+            if is_gate
+               UI.SetFocus(Id(:ext_ip))
+            else
+               UI.SetFocus(Id(:def_gw))
+            end
             
             ret = nil
             while true
@@ -227,10 +232,9 @@ module OSS
                      }
                  }
                  NetworkInterfaces.Commit
-                 if SCR.Read(path(".etc.schoolserver.SCHOOL_USE_DHCP")) == "yes"
-                    SCR.Write(path(".etc.dhcpd.DHCPD_INTERFACE"), intdev)
-                    SCR.Write(path(".etc.dhcpd"), nil)
-                 end
+		 # We write the internal device every time as internal device.
+                 SCR.Write(path(".etc.dhcpd.DHCPD_INTERFACE"), intdev)
+                 SCR.Write(path(".etc.dhcpd"), nil)
                  domain = SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN"))
                  dns_tmp = DNS.Export
                  serverName = SCR.Read(path(".etc.schoolserver.SCHOOL_NETBIOSNAME")) 
@@ -345,9 +349,12 @@ host_tmp = "#
                 "special"        => _("Special School"),
                 "other"          => _("Other School Type"),
                 "administration" => _("Administration"),
-                "business"       => _("Company"),
-                "cephalix"       => _("CEPHALIX")
-            }
+                "business"       => _("Company")
+	    }
+
+	    if OSRelease.ReleaseName == 'CRANIX'
+	        instTypes["cephalix"] = _("CEPHALIX")
+	    end
 
             itemlist = []
             Builtins.foreach(instTypes) do |k, v|
@@ -494,6 +501,7 @@ host_tmp = "#
 
         def OssSetup
 
+            Builtins.y2milestone("-- OSS-Setup dialogs.OssSetup Called --")
             Progress.New(
                 _("Saving the OSS configuration"),
                 " ",
@@ -531,9 +539,9 @@ host_tmp = "#
             Progress.NextStage
             Progress.off
             if SCR.Read(path(".etc.schoolserver.SCHOOL_USE_DHCP")) == "yes"
-                    SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts --dhcp --postsetup" )
+               SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts --dhcp --postsetup" )
             else
-                SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts --postsetup" )
+               SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts --postsetup" )
             end
             SCR.Execute(path(".target.bash"), "rm /tmp/passwd")
         end
