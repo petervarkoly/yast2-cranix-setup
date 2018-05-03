@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+Thu May  3 15:29:25 UTC 2018 - peter@varkoly.de
+
+- e8c90015757e087458a8f441024c721e8ca3cbdf
+  CEPHALIX and CRANIX have the same web package.
+
+-------------------------------------------------------------------
+Thu May  3 14:01:49 UTC 2018 - peter@varkoly.de
+
+- 23a353ac6e5b4f0adaaedcef7dfff1ee85abd864
+   Provide CEPHALIX installation only on CRANIX server.
+   Some code clean up.
+
+-------------------------------------------------------------------
 Mon Apr  2 07:46:25 UTC 2018 - peter@varkoly.de
 
 - 65a90cfd3eb31484aafc5aa7dd6362d2ce665688
