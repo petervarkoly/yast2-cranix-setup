@@ -58,8 +58,8 @@ module OSS
                      if OSRelease.ReleaseName == 'CRANIX'
                         if SCR.Read(path(".etc.schoolserver.SCHOOL_TYPE")) == "cephalix"
                            to_install << "cephalix-java"
-                           to_install << "cephalix-web"
                            to_install << "cephalix-base"
+                           to_install << "ubs-web"
                         else
                            to_install << "ubs-web"
                            to_install << "ubs-java"
