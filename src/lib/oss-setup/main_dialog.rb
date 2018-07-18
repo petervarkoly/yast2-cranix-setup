@@ -62,7 +62,7 @@ module OSS
                            to_install << "ubs-web"
                         else
                            to_install << "ubs-web"
-                           to_install << "ubs-java"
+                           to_install << "oss-java"
                         end
                      else
                         to_install << "oss-web"
