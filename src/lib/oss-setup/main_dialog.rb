@@ -55,17 +55,12 @@ module OSS
                      ret = DialogsInst.CardDialog()
                 when :write
                      to_install = []
-                     if OSRelease.ReleaseName == 'CRANIX'
-                        if SCR.Read(path(".etc.schoolserver.SCHOOL_TYPE")) == "cephalix"
-                           to_install << "cephalix-java"
-                           to_install << "cephalix-base"
-                           to_install << "ubs-web"
-                        else
-                           to_install << "ubs-web"
-                           to_install << "oss-java"
-                        end
+                     to_install << "oss-web"
+                     to_install << "oss-lang"
+                     if SCR.Read(path(".etc.schoolserver.SCHOOL_TYPE")) == "cephalix"
+                        to_install << "cephalix-java"
+                        to_install << "cephalix-base"
                      else
-                        to_install << "oss-web"
                         to_install << "oss-java"
                      end
 		     Builtins.y2milestone("Base packages to install %1", to_install )
