@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Fri Nov 23 11:57:56 UTC 2018 - peter@varkoly.de
+
+- Implementing expert network settings.
+
+-------------------------------------------------------------------
+Sun Aug 19 06:34:23 UTC 2018 - peter@varkoly.de
+
+- Drop product CRANIX. We only have CEPHALIX and OSS.
+  CRANIX is the web ui for OSS and CEPHALIX
+
+-------------------------------------------------------------------
 Wed Jul 18 16:46:21 UTC 2018 - peter@varkoly.de
 
 - b40668c1b82f1dbe77ac1be508b99166486e9417

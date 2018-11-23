@@ -393,10 +393,33 @@ host_tmp = "#
                        HSpacing(8),
                        ComboBox(Id(:net0),Opt(:notify),"Internal Network",["172","10","192"]),
                        ReplacePoint( Id(:rep_net1), ComboBox(Id(:net1)," ",lnet1("172",16))),
-                       Label("/"),
                        ReplacePoint( Id(:rep_nm),   ComboBox(Id(:netm),Opt(:notify),_("Netmask"),lnetmask("172"))),
-                       HStretch()
-                    ),
+		       HStretch(10)
+	            ),
+	            VSpacing(1),
+		    HBox(
+		       HSpacing(8),
+		       Left(CheckBox(Id(:expert_settings),Opt(:notify),  _("Expert Settings"), false)),HStretch(10)
+		    ),
+		    HBox(
+		       HSpacing(8),
+		       Left(InputField(Id(:expert_network), _("Internal Network"),"")),HSpacing(0.1),
+		       Left(ComboBox(Id(:expert_netmask),   _("Netmask"),lnetmask("expert"))),
+		       Left(ComboBox(Id(:expert_server_nm), _("Servernet Netmask"),lnetmask("expert"))),
+		       Left(InputField(Id(:expert_anon),   _("ANON_DHCP Start IP"),"")),HSpacing(0.1),
+		       Left(ComboBox(Id(:expert_anon_nm),   _("ANON_DHCP Netmask"),lnetmask("expert"))),
+		       Left(InputField(Id(:expert_first),   _("First Room IP"),"")),HSpacing(0.1),
+		       HStretch(10)
+	            ),
+		    HBox(
+		       HSpacing(8),
+		       Left(InputField(Id(:expert_admin),   _("Server IP"),"")),HSpacing(0.1),
+		       Left(InputField(Id(:expert_portal),  _("Portal IP"),"")),HSpacing(0.1),
+		       Left(InputField(Id(:expert_proxy),   _("Proxy IP"),"")),HSpacing(0.1),
+		       Left(InputField(Id(:expert_print),   _("Printserver IP"),"")),HSpacing(0.1),
+		       Left(InputField(Id(:expert_backup),  _("Backup IP"),"")),HSpacing(0.1),
+		       HStretch(10)
+		    ),
                     VSpacing(1),
                     HBox(
                        HSpacing(8),
@@ -422,6 +445,17 @@ host_tmp = "#
             UI.SetFocus(Id(:schoolname))
             valid_domain_chars = ".0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-"
             UI.ChangeWidget(Id(:domain), :ValidChars, valid_domain_chars)
+	    UI.ChangeWidget(Id(:expert_network), :Enabled, false)
+	    UI.ChangeWidget(Id(:expert_netmask), :Enabled, false)
+	    UI.ChangeWidget(Id(:expert_server_nm), :Enabled, false)
+	    UI.ChangeWidget(Id(:expert_anon), :Enabled, false)
+	    UI.ChangeWidget(Id(:expert_anon_nm), :Enabled, false)
+	    UI.ChangeWidget(Id(:expert_admin), :Enabled, false)
+	    UI.ChangeWidget(Id(:expert_portal), :Enabled, false)
+	    UI.ChangeWidget(Id(:expert_proxy), :Enabled, false)
+	    UI.ChangeWidget(Id(:expert_print), :Enabled, false)
+	    UI.ChangeWidget(Id(:expert_backup), :Enabled, false)
+	    UI.ChangeWidget(Id(:expert_first), :Enabled, false)
  
             ret = nil
             while true
@@ -434,6 +468,39 @@ host_tmp = "#
                 else
                   next
                 end
+              when :expert_settings
+                if Convert.to_boolean(UI.QueryWidget(Id(:expert_settings),   :Value))
+                   Popup.Warning(_("Selecting the expert settings, there is no guaranty that the installation will success."))
+                   UI.ChangeWidget(Id(:net0), :Enabled, false)
+                   UI.ChangeWidget(Id(:net1), :Enabled, false)
+                   UI.ChangeWidget(Id(:netm), :Enabled, false)
+		   UI.ChangeWidget(Id(:expert_network), :Enabled, true)
+		   UI.ChangeWidget(Id(:expert_netmask), :Enabled, true)
+		   UI.ChangeWidget(Id(:expert_server_nm), :Enabled, true)
+		   UI.ChangeWidget(Id(:expert_anon), :Enabled, true)
+		   UI.ChangeWidget(Id(:expert_anon_nm), :Enabled, true)
+		   UI.ChangeWidget(Id(:expert_admin), :Enabled, true)
+		   UI.ChangeWidget(Id(:expert_portal), :Enabled, true)
+		   UI.ChangeWidget(Id(:expert_proxy), :Enabled, true)
+		   UI.ChangeWidget(Id(:expert_print), :Enabled, true)
+		   UI.ChangeWidget(Id(:expert_backup), :Enabled, true)
+	           UI.ChangeWidget(Id(:expert_first), :Enabled, true)
+                else
+                   UI.ChangeWidget(Id(:net0), :Enabled, true)
+                   UI.ChangeWidget(Id(:net1), :Enabled, true)
+                   UI.ChangeWidget(Id(:netm), :Enabled, true)
+		   UI.ChangeWidget(Id(:expert_network), :Enabled, false)
+		   UI.ChangeWidget(Id(:expert_netmask), :Enabled, false)
+		   UI.ChangeWidget(Id(:expert_server_nm), :Enabled, false)
+		   UI.ChangeWidget(Id(:expert_anon), :Enabled, false)
+		   UI.ChangeWidget(Id(:expert_anon_nm), :Enabled, false)
+		   UI.ChangeWidget(Id(:expert_admin), :Enabled, false)
+		   UI.ChangeWidget(Id(:expert_portal), :Enabled, false)
+		   UI.ChangeWidget(Id(:expert_proxy), :Enabled, false)
+		   UI.ChangeWidget(Id(:expert_print), :Enabled, false)
+		   UI.ChangeWidget(Id(:expert_backup), :Enabled, false)
+	           UI.ChangeWidget(Id(:expert_first), :Enabled, false)
+		end
               when :net0
                  net = Convert.to_string(UI.QueryWidget(Id(:net0),    :Value))
                  nm  = Convert.to_integer(UI.QueryWidget(Id(:netm),   :Value))
@@ -446,10 +513,54 @@ host_tmp = "#
                  UI.ReplaceWidget(Id(:rep_net1),ComboBox(Id(:net1)," ", lnet1(net,nm) ))
                  next
              when :next
-                 net0 = Convert.to_string(UI.QueryWidget(Id(:net0),   :Value))
-                 net1 = Convert.to_string(UI.QueryWidget(Id(:net1),   :Value))
-                 netm = Convert.to_string(UI.QueryWidget(Id(:netm),   :Value))
-                 nets = net0 + "." + net1
+                 if Convert.to_boolean(UI.QueryWidget(Id(:expert_settings),   :Value))
+                   netm  = Convert.to_string(UI.QueryWidget(Id(:expert_netmask),   :Value))
+		   nets  = Convert.to_string(UI.QueryWidget(Id(:expert_network),   :Value))
+		   admin = Convert.to_string(UI.QueryWidget(Id(:expert_admin),    :Value))
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK"),      netm )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK_STRING"), Netmask.FromBits(netm.to_i) )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_NETWORK"),      nets )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER"),       admin )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_MAILSERVER"),   Convert.to_string(UI.QueryWidget(Id(:expert_portal),   :Value)) )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_PRINTSERVER"),  Convert.to_string(UI.QueryWidget(Id(:expert_print),    :Value)) )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_PROXY"),        Convert.to_string(UI.QueryWidget(Id(:expert_proxy),    :Value)) )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_BACKUP_SERVER"),Convert.to_string(UI.QueryWidget(Id(:expert_backup),   :Value)) )
+		   anon_start = Convert.to_string(UI.QueryWidget(Id(:expert_anon),    :Value))
+		   anon_nm    = Convert.to_string(UI.QueryWidget(Id(:expert_anon_nm), :Value))
+		   anon_end   = IP.ComputeBroadcast(anon_start,Netmask.FromBits(anon_nm.to_i))
+		   anon_start = IP.ComputeNetwork(anon_start,  Netmask.FromBits(anon_nm.to_i))
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), anon_start + " " + anon_end)
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_NET"),   anon_start + "/" + anon_nm )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"), Convert.to_string(UI.QueryWidget(Id(:expert_first),   :Value)) )
+		   server_nm    = Convert.to_string(UI.QueryWidget(Id(:expert_server_nm), :Value))
+		   server_start = IP.ComputeNetwork(admin,  Netmask.FromBits(server_nm.to_i))
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"), server_start + "/" + server_nm )
+                 else
+                   net0 = Convert.to_string(UI.QueryWidget(Id(:net0),   :Value))
+                   net1 = Convert.to_string(UI.QueryWidget(Id(:net1),   :Value))
+                   netm = Convert.to_string(UI.QueryWidget(Id(:netm),   :Value))
+                   nets = net0 + "." + net1
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK"),      netm )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK_STRING"), Netmask.FromBits(netm.to_i) )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_NETWORK"),      nets )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER"),       nets.chomp("0") + "2" )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_MAILSERVER"),   nets.chomp("0") + "3" )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_PRINTSERVER"),  nets.chomp("0") + "4" )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_PROXY"),        nets.chomp("0") + "5" )
+                   SCR.Write(path(".etc.schoolserver.SCHOOL_BACKUP_SERVER"),nets.chomp("0") + "6" )
+                   case netm
+                   when "24","23","22"
+                        SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), nets.chomp("0") + "32 " + nets.chomp("0.0") + "63" )
+                        SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_NET"),   nets.chomp("0") + "32/27" )
+                        SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"),  nets.chomp("0") + "64" )
+                        SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"),      nets.chomp("0") + "0/27" )
+                   else
+                        SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), nets.chomp("0.0") + "1.0 " + nets.chomp("0.0") + "1.31" )
+                        SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_NET"),   nets.chomp("0.0") + "1.0/24" )
+                        SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"),  nets.chomp("0.0") + "2.0" )
+                        SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"),      nets.chomp("0")   + "0/24" )
+                   end
+		 end
                  domain = Convert.to_string(UI.QueryWidget(Id(:domain),:Value))
                  if domain.split(".").size < 2
                     msg = Builtins.sformat(_("'%1' is an invalid Domain Name. Use something like school.edu."), domain)
@@ -470,27 +581,6 @@ host_tmp = "#
                  SCR.Write(path(".etc.schoolserver.SCHOOL_TYPE"),         Convert.to_string(UI.QueryWidget(Id(:type),:Value)))
                  SCR.Write(path(".etc.schoolserver.SCHOOL_ISGATE"),       Convert.to_boolean(UI.QueryWidget(Id(:is_gate),:Value)) ? "yes" : "no" )
                  SCR.Write(path(".etc.schoolserver.SCHOOL_USE_DHCP"),     Convert.to_boolean(UI.QueryWidget(Id(:use_dhcp),:Value)) ? "yes" : "no" )
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_WORKSTATIONS_IN_ROOM"), Convert.to_integer(UI.QueryWidget(Id(:wsnr_in_room),:Value)) )
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK"),      netm )
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK_STRING"), Netmask.FromBits(netm.to_i) )
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_NETWORK"),      nets )
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER"),       nets.chomp("0") + "2" )
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_MAILSERVER"),   nets.chomp("0") + "3" )
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_PRINTSERVER"),  nets.chomp("0") + "4" )
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_PROXY"),        nets.chomp("0") + "5" )
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_BACKUP_SERVER"),nets.chomp("0") + "6" )
-                 case netm
-                 when "24","23","22"
-                      SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), nets.chomp("0") + "32 " + nets.chomp("0.0") + "63" )
-                      SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_NET"),   nets.chomp("0") + "32/27" )
-                      SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"),  nets.chomp("0") + "64" )
-                      SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"),      nets.chomp("0") + "0/27" )
-                 else
-                      SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), nets.chomp("0.0") + "1.0 " + nets.chomp("0.0") + "1.31" )
-                      SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_NET"),   nets.chomp("0.0") + "1.0/24" )
-                      SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"),  nets.chomp("0.0") + "2.0" )
-                      SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"),      nets.chomp("0")   + "0/24" )
-                 end
                  SCR.Write(path(".etc.schoolserver"),nil)
                  ret = :network
                  break
@@ -632,6 +722,10 @@ host_tmp = "#
             to   = 24
             if net == "10"
                from = 8
+            end
+            if net == "expert"
+               from = 8
+               to   = 30
             end
             ret = []
             from.upto to do |i|
