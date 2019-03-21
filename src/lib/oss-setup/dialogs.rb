@@ -319,6 +319,7 @@ host_tmp = "#
 "+ prox   + "   proxy."       + domain + " proxy
 "+ backup + "   backup."      + domain + " backup
 216.239.32.20  www.google.de www.google.com www.google.fr www.google.it www.google.hu www.google.en
+185.3.232.240  repo.cephalix.eu
 "
 		 if is_gate
 			host_tmp = host_tmp + ext_ip + " extip

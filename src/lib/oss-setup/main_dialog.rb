@@ -44,8 +44,15 @@ module OSS
                          SCR.Read(path(".etc.schoolserver"))
                          ret = :network
                      else
-                         SCR.Read(path(".etc.schoolserver"))
-                         ret = :basic
+			if ! File.exist?("/etc/sysconfig/scoolserver")
+			  if File.exist?("/var/adm/fillup-templates/sysconfig.schoolserver")
+			     SCR.Execute(path(".target.bash"), "cp /var/adm/fillup-templates/sysconfig.schoolserver /etc/sysconfig/scoolserver")
+			  else
+			     SCR.Execute(path(".target.bash"), "cp /usr/share/fillup-templates/sysconfig.schoolserver /etc/sysconfig/scoolserver")
+			  end
+			end
+                        SCR.Read(path(".etc.schoolserver"))
+                        ret = :basic
                      end
                 when :basic
                      ret = DialogsInst.BasicSetting()
@@ -54,6 +61,7 @@ module OSS
                 when :network
                      ret = DialogsInst.CardDialog()
                 when :write
+		     SCR.Execute(path(".target.bash"), "/usr/share/oss/tools/register.sh")
                      to_install = []
                      to_install << "oss-web"
                      to_install << "oss-lang"
@@ -63,9 +71,9 @@ module OSS
                      else
                         to_install << "oss-java"
                      end
-		     Builtins.y2milestone("Base packages to install %1", to_install )
+                     Builtins.y2milestone("Base packages to install %1", to_install )
                      Package.DoInstall(to_install)
-		     Builtins.y2milestone("Base packages was installed.")
+                     Builtins.y2milestone("Base packages was installed.")
                      ret = DialogsInst.OssSetup()
                      Package.DoInstall(["oss-clone","oss-proxy"])
                      Service.Enable("xinetd")
