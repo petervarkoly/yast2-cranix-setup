@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-oss-setup
-Version:	4.0
+Version:	4.0.1
 Release:	0
 License:	Commercial
 Summary:	Setup for OSS
