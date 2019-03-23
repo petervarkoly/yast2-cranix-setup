@@ -364,7 +364,6 @@ host_tmp = "#
 
             # Dialog contents
             contents = VBox(
-              HSpacing(8),
                 Frame( _("Basic Setting"),
                    HBox(
                      HSpacing(8),
@@ -386,41 +385,42 @@ host_tmp = "#
                      HSpacing(8)
                    )
                 ),
-                VSpacing(8),
                 Frame( _("Network Setting"),
                   VBox(
                     VSpacing(1),
-                    HBox(
+                    Left(HBox(
                        HSpacing(8),
-                       ComboBox(Id(:net0),Opt(:notify),"Internal Network",["172","10","192"]),
-                       ReplacePoint( Id(:rep_net1), ComboBox(Id(:net1)," ",lnet1("172",16))),
-                       ReplacePoint( Id(:rep_nm),   ComboBox(Id(:netm),Opt(:notify),_("Netmask"),lnetmask("172"))),
+                       HWeight( 1, ComboBox(Id(:net0),Opt(:notify),"Internal Network",["172","10","192"])),
+                       ReplacePoint( Id(:rep_net1),HWeight( 1,ComboBox(Id(:net1)," ",lnet1("172",16)))),
+                       ReplacePoint( Id(:rep_nm),  HWeight( 1,ComboBox(Id(:netm),Opt(:notify),_("Netmask"),lnetmask("172")))),
 		       HStretch(10)
-	            ),
+	            )),
 	            VSpacing(1),
 		    HBox(
 		       HSpacing(8),
-		       Left(CheckBox(Id(:expert_settings),Opt(:notify),  _("Expert Settings"), false)),HStretch(10)
+		       Left(CheckBox(Id(:expert_settings),Opt(:notify),  _("Expert Settings"), false)),HStretch()
 		    ),
-		    HBox(
+		    Left(HBox(
 		       HSpacing(8),
-		       Left(InputField(Id(:expert_network), _("Internal Network"),"")),HSpacing(0.1),
-		       Left(ComboBox(Id(:expert_netmask),   _("Netmask"),lnetmask("expert"))),
-		       Left(ComboBox(Id(:expert_server_nm), _("Servernet Netmask"),lnetmask("expert"))),
-		       Left(InputField(Id(:expert_anon),   _("ANON_DHCP Start IP"),"")),HSpacing(0.1),
-		       Left(ComboBox(Id(:expert_anon_nm),   _("ANON_DHCP Netmask"),lnetmask("expert"))),
-		       Left(InputField(Id(:expert_first),   _("First Room IP"),"")),HSpacing(0.1),
-		       HStretch(10)
-	            ),
-		    HBox(
+		       HWeight( 1, InputField(Id(:expert_admin),   _("Server IP"),"")),HSpacing(1),
+		       HWeight( 1, InputField(Id(:expert_portal),  _("Portal IP"),"")),HSpacing(1),
+		       HWeight( 1, InputField(Id(:expert_proxy),   _("Proxy IP"),"")),HSpacing(1),
+		       HWeight( 1, InputField(Id(:expert_print),   _("Printserver IP"),"")),HSpacing(1),
+		    )),
+		    Left(HBox(
 		       HSpacing(8),
-		       Left(InputField(Id(:expert_admin),   _("Server IP"),"")),HSpacing(0.1),
-		       Left(InputField(Id(:expert_portal),  _("Portal IP"),"")),HSpacing(0.1),
-		       Left(InputField(Id(:expert_proxy),   _("Proxy IP"),"")),HSpacing(0.1),
-		       Left(InputField(Id(:expert_print),   _("Printserver IP"),"")),HSpacing(0.1),
-		       Left(InputField(Id(:expert_backup),  _("Backup IP"),"")),HSpacing(0.1),
-		       HStretch(10)
-		    ),
+		       HWeight( 1, InputField(Id(:expert_network), _("Internal Network"),"")),HSpacing(1),
+		       HWeight( 1, ComboBox(Id(:expert_netmask),   _("Netmask"),lnetmask("expert"))),HSpacing(1),
+		       HWeight( 1, ComboBox(Id(:expert_server_nm), _("Servernet Netmask"),lnetmask("expert"))),
+		       HWeight( 1, InputField(Id(:expert_backup),  _("Backup IP"),"")),
+	            )),
+		    Left(HBox(
+		       HSpacing(8),
+		       HWeight( 1, InputField(Id(:expert_anon),   _("ANON_DHCP Start IP"),"")),HSpacing(1),
+		       HWeight( 1, ComboBox(Id(:expert_anon_nm),  _("ANON_DHCP Netmask"),lnetmask("expert"))),HSpacing(1),
+		       HWeight( 1, InputField(Id(:expert_first),  _("First Room IP"),"")),
+		       HWeight( 1, Label(""))
+		    )),
                     VSpacing(1),
                     HBox(
                        HSpacing(8),
@@ -551,7 +551,7 @@ host_tmp = "#
                    SCR.Write(path(".etc.schoolserver.SCHOOL_BACKUP_SERVER"),nets.chomp("0") + "6" )
                    case netm
                    when "24","23","22"
-                        SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), nets.chomp("0") + "32 " + nets.chomp("0.0") + "63" )
+                        SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), nets.chomp("0") + "32 " + nets.chomp("0") + "63" )
                         SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_NET"),   nets.chomp("0") + "32/27" )
                         SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"),  nets.chomp("0") + "64" )
                         SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"),      nets.chomp("0") + "0/27" )
@@ -575,9 +575,14 @@ host_tmp = "#
                     UI.SetFocus(Id(:domain))
                     next
                  end
+		 #Evaluate workgroup. This must not be longer then 15 Char
+		 workgroup=domain.split(".")[0].upcase
+		 if workgroup.size > 15
+		    workgroup=GetWorkgroup()
+		 end
                  SCR.Write(path(".etc.schoolserver.SCHOOL_NAME"),         Convert.to_string(UI.QueryWidget(Id(:schoolname),:Value)))
                  SCR.Write(path(".etc.schoolserver.SCHOOL_DOMAIN"),       domain )
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_WORKGROUP"),    domain.split(".")[0].upcase )
+                 SCR.Write(path(".etc.schoolserver.SCHOOL_WORKGROUP"),    workgroup )
                  SCR.Write(path(".etc.schoolserver.SCHOOL_REG_CODE"),     Convert.to_string(UI.QueryWidget(Id(:regcode),:Value)))
                  SCR.Write(path(".etc.schoolserver.SCHOOL_TYPE"),         Convert.to_string(UI.QueryWidget(Id(:type),:Value)))
                  SCR.Write(path(".etc.schoolserver.SCHOOL_ISGATE"),       Convert.to_boolean(UI.QueryWidget(Id(:is_gate),:Value)) ? "yes" : "no" )
@@ -692,6 +697,47 @@ host_tmp = "#
             SCR.Execute(path(".target.bash"), "chmod 600 /tmp/passwd")
             #UI.CloseDialog
         end
+
+	def GetWorkgroup
+	    workgroup = ""
+            UI.OpenDialog(
+                Opt(:decorated),
+                VBox(
+		     Left(
+		        RichText(
+				Opt(:hstretch),
+			       _("The workgroup name calculated from domain name is invalid.<br>") +
+			       _("Please provide a valid one. This must not be longer then 15.")
+		     )),
+		     Left(InputField(Id(:workgroup), Opt(:hstretch), _("Workgroup"), "")),
+                     HBox(
+                        PushButton(Id(:ok), _("OK"))
+                     )
+                )
+            )
+            while true
+                event = UI.WaitForEvent
+                ret = Ops.get(event, "ID")
+                if ret == :ok
+                    workgroup = Convert.to_string( UI.QueryWidget(Id(:workgroup), :Value) )
+		    if workgroup.size > 15
+		        Popup.Error(_("The workgroup name must not be longer then 15."))
+			next
+		    end
+		    if workgroup.size < 3
+			Popup.Error(_("The workgroup name must not be shorter then 3."))
+			next
+		    end
+		    if workgroup[0] == '*'
+			Popup.Error(_("The workgroup name must not start with '*'"))
+			next
+		    end
+		    break
+		end
+	    end
+            UI.CloseDialog
+	    return workgroup.upcase
+	end
 
         #Some internal use only functions
         :privat
