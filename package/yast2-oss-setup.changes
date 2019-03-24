@@ -1,4 +1,19 @@
 -------------------------------------------------------------------
+Sun Mar 24 06:52:12 UTC 2019 - Peter Varkoly <peter@varkoly.de>
+
+- 5bbbc9c4e888f2945733b2504ee712fa691c8e34
+  Fix typo.
+
+-------------------------------------------------------------------
+Sat Mar 23 11:26:58 UTC 2019 - Peter Varkoly <varkoly@suse.com>
+
+- 3164a3d99943f281cf681d599a5b84e75d6488be
+  o dialogs.rb
+    - Use the whole ANON_DHCP range.
+    - Optimize lookout of expert settings.
+    - Check if workgroup name is ok.
+
+-------------------------------------------------------------------
 Thu Mar 21 05:28:13 UTC 2019 - Peter Varkoly <peter@varkoly.de>
 
 - 16511e85ab6f82ae7a97412cde3f64531a46e1a8
