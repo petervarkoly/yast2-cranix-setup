@@ -44,11 +44,11 @@ module OSS
                          SCR.Read(path(".etc.schoolserver"))
                          ret = :network
                      else
-			if ! File.exist?("/etc/sysconfig/scoolserver")
+			if ! File.exist?("/etc/sysconfig/schoolserver")
 			  if File.exist?("/var/adm/fillup-templates/sysconfig.schoolserver")
-			     SCR.Execute(path(".target.bash"), "cp /var/adm/fillup-templates/sysconfig.schoolserver /etc/sysconfig/scoolserver")
+			     SCR.Execute(path(".target.bash"), "cp /var/adm/fillup-templates/sysconfig.schoolserver /etc/sysconfig/schoolserver")
 			  else
-			     SCR.Execute(path(".target.bash"), "cp /usr/share/fillup-templates/sysconfig.schoolserver /etc/sysconfig/scoolserver")
+			     SCR.Execute(path(".target.bash"), "cp /usr/share/fillup-templates/sysconfig.schoolserver /etc/sysconfig/schoolserver")
 			  end
 			end
                         SCR.Read(path(".etc.schoolserver"))
