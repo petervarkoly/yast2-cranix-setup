@@ -1,7 +1,7 @@
 #
 # spec file for package yast2-oss-setup
 #
-# Copyright (c) 2016 Peter Varkoly, Nuernberg, Germany.
+# Copyright (c) Peter Varkoly, Nuernberg, Germany.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -12,15 +12,16 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-# Please submit bugfixes or comments via http://bugs.opensuse.org/
+# Please submit bugfixes or comments via http://bugs.cephalix.eu/
 #
 
 Name:           yast2-oss-setup
-Version:	4.0.1
+Version:	4.1.0
 Release:	0
-License:	Commercial
+License:	MIT
 Summary:	Setup for OSS
-Url:		www.openschoolserver.net
+Url:		www.cephalix.eu
+Vendor:		Dipl. Ing. Peter Varkoly
 Group:		System/YaS
 Source:		%{name}-%{version}.tar.bz2
 BuildRequires:	yast2 yast2-ruby-bindings yast2-devtools
