@@ -6,6 +6,10 @@
 
 require 'yast'
 require 'ui/dialog'
+require "y2firewall/firewalld"
+require "y2firewall/helpers/interfaces"
+require "y2firewall/firewalld/interface"
+
 
 Yast.import 'UI'
 Yast.import 'Icon'
@@ -267,20 +271,12 @@ module OSS
 #					216.239.32.20  => [ "www.google.de","www.google.com","www.google.fr","www.google.it","www.google.hu","www.google.en" ]
 #                                  })
 #                Host.Import(host_tmp)
-
+		 fw_int_dev = Y2Firewall::Firewalld::Interface.new(intdev)
+                 fw_int_dev.zone="trusted"
                  if is_gate
-                    _FW = SuSEFirewall.Export
-                    _FW["FW_DEV_EXT"] = extdev
-                    _FW["FW_DEV_INT"] = intdev
-                    _FW["FW_PROTECT_FROM_INT"] = "no"
-                    _FW["FW_SERVICE_AUTODETECT"] = "no"
-                    _FW["FW_ALLOW_PING_FW"] = "no"
-                    _FW["FW_ROUTE"] = "yes"
-                    _FW["FW_ZONE_DEFAULT"] = "int"
-                    _FW["enable_firewall"] = true
-                    _FW["start_firewall"] = true
-                    SuSEFirewall.Import(_FW)
                     #Configure external interface
+                    fw_ext_dev = Y2Firewall::Firewalld::Interface.new(extdev)
+                    fw_ext_dev.zone="external"
                     if NetworkInterfaces.Check(extdev)
                       NetworkInterfaces.Edit(extdev)
                     else
