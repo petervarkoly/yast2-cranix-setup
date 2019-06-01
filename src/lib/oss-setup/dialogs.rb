@@ -9,6 +9,7 @@ require 'ui/dialog'
 require "y2firewall/firewalld"
 require "y2firewall/helpers/interfaces"
 require "y2firewall/firewalld/interface"
+require "open3"
 
 
 Yast.import 'UI'
@@ -648,7 +649,7 @@ host_tmp = "#
                 Opt(:decorated),
                 VBox(
                      Left(Password(Id(:password), _("Administrator Password"), "") ),
-                     Left(Password(Id(:password1), "", "") ),
+                     Left(Password(Id(:password1),   "                     ", "") ),
                      HBox(
                         PushButton(Id(:cancel), _("Cancel")),
                         PushButton(Id(:ok), _("OK"))
@@ -669,20 +670,17 @@ host_tmp = "#
                         Popup.Error(_("The passwords do not match."))
                         next
                     end
-                    if( pass.gsub(/[A-Z]/,"1") == pass )
-                        Popup.Error(_("The passsword must contains upper case letter."))
-                        next
-                    end
-                    if( pass.gsub(/[0-9]/,"a") == pass )
-                        Popup.Error(_("The passsword must contains numbers."))
-                        next
-                    end
                     if( pass.size < 8)
                         Popup.Error(_("The passsword must contains minimum 8 character."))
                         next
                     end
                     if( pass.size > 14)
                         Popup.Error(_("The passsword must not contains more then 14 character."))
+                        next
+                    end
+		    o,s = Open3.capture2("/usr/share/oss/tools/check_password_complexity.sh", :stdin_data => pass)
+		    if( o.size > 0 )
+                        Popup.Error(_(o))
                         next
                     end
                     UI.CloseDialog
