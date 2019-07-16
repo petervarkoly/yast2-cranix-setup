@@ -62,18 +62,6 @@ module OSS
                      ret = DialogsInst.CardDialog()
                 when :write
 		     SCR.Execute(path(".target.bash"), "/usr/share/oss/tools/register.sh")
-                     to_install = []
-                     to_install << "oss-web"
-                     to_install << "oss-lang"
-                     if SCR.Read(path(".etc.schoolserver.SCHOOL_TYPE")) == "cephalix"
-                        to_install << "cephalix-java"
-                        to_install << "cephalix-base"
-                     else
-                        to_install << "oss-java"
-                     end
-                     Builtins.y2milestone("Base packages to install %1", to_install )
-                     Package.DoInstall(to_install)
-                     Builtins.y2milestone("Base packages was installed.")
                      ret = DialogsInst.OssSetup()
                      Package.DoInstall(["oss-clone","oss-proxy"])
                      Service.Enable("xinetd")

@@ -350,8 +350,9 @@ host_tmp = "#
                 "business"       => _("Company")
 	    }
 
-	    if OSRelease.ReleaseName == 'CEPHALIX'
-	        instTypes["cephalix"] = _("CEPHALIX")
+	    #if OSRelease.ReleaseName == 'CEPHALIX'
+	    if Package.Installed("patterns-oss-cephalix")
+	        instTypes =  { "cephalix" => _("CEPHALIX") }
 	    end
 
             itemlist = []
