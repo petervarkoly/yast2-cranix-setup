@@ -63,7 +63,7 @@ module OSS
                 when :write
 		     SCR.Execute(path(".target.bash"), "/usr/share/oss/tools/register.sh")
                      ret = DialogsInst.OssSetup()
-                     Package.DoInstall(["oss-clone","oss-proxy"])
+                     Package.DoInstall(["oss-clone","oss-proxy","oss-web"])
                      Service.Enable("xinetd")
                      Service.Enable("vsftpd")
                      Service.Enable("squid")
