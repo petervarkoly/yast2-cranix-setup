@@ -238,13 +238,12 @@ module OSS
                  }
                  NetworkInterfaces.Commit
                  # We write the internal device every time as internal device.
-                 SCR.Write(path(".sysconfig.SuSEfirewall2.FW_ROUTE", "yes")
                  if is_gate
+                     SCR.Write(path(".sysconfig.SuSEfirewall2.FW_ROUTE", "yes"))
                      SCR.Write(path(".sysconfig.SuSEfirewall2.FW_DEV_EXT", extdev)
                  end
-                 SCR.Write(path(".sysconfig.SuSEfirewall2.FW_DEV_INT", intdev)
-                 SCR.Write(path(".sysconfig.SuSEfirewall2.FW_DEV_INT",nil)
-                 SCR.Write(path(".sysconfig.SuSEfirewall2", "yes")
+                 SCR.Write(path(".sysconfig.SuSEfirewall2.FW_DEV_INT", intdev))
+                 SCR.Write(path(".sysconfig.SuSEfirewall2", nil)
                  SCR.Write(path(".etc.dhcpd.DHCPD_INTERFACE"), intdev)
                  SCR.Write(path(".etc.dhcpd"), nil)
                  domain = SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN"))
