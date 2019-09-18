@@ -44,13 +44,13 @@ module OSS
                          SCR.Read(path(".etc.schoolserver"))
                          ret = :network
                      else
-			if ! File.exist?("/etc/sysconfig/schoolserver")
-			  if File.exist?("/var/adm/fillup-templates/sysconfig.schoolserver")
-			     SCR.Execute(path(".target.bash"), "cp /var/adm/fillup-templates/sysconfig.schoolserver /etc/sysconfig/schoolserver")
-			  else
-			     SCR.Execute(path(".target.bash"), "cp /usr/share/fillup-templates/sysconfig.schoolserver /etc/sysconfig/schoolserver")
-			  end
-			end
+                        if ! File.exist?("/etc/sysconfig/schoolserver")
+                          if File.exist?("/var/adm/fillup-templates/sysconfig.schoolserver")
+                             SCR.Execute(path(".target.bash"), "cp /var/adm/fillup-templates/sysconfig.schoolserver /etc/sysconfig/schoolserver")
+                          else
+                             SCR.Execute(path(".target.bash"), "cp /usr/share/fillup-templates/sysconfig.schoolserver /etc/sysconfig/schoolserver")
+                          end
+                        end
                         SCR.Read(path(".etc.schoolserver"))
                         ret = :basic
                      end
@@ -61,9 +61,10 @@ module OSS
                 when :network
                      ret = DialogsInst.CardDialog()
                 when :write
-		     SCR.Execute(path(".target.bash"), "/usr/share/oss/tools/register.sh")
+                     SCR.Execute(path(".target.bash"), "/usr/share/oss/tools/register.sh")
                      ret = DialogsInst.OssSetup()
                      Package.DoInstall(["oss-clone","oss-proxy","oss-web"])
+		     Package.DoRemove(["firewalld","yast2-firewall","firewalld-lang"])
                      Service.Enable("xinetd")
                      Service.Enable("vsftpd")
                      Service.Enable("squid")
