@@ -6,9 +6,9 @@
 
 require 'yast'
 require 'ui/dialog'
-require "y2firewall/firewalld"
-require "y2firewall/helpers/interfaces"
-require "y2firewall/firewalld/interface"
+#require "y2firewall/firewalld"
+#require "y2firewall/helpers/interfaces"
+#require "y2firewall/firewalld/interface"
 require "open3"
 
 
@@ -237,7 +237,14 @@ module OSS
                      }
                  }
                  NetworkInterfaces.Commit
-		 # We write the internal device every time as internal device.
+                 # We write the internal device every time as internal device.
+                 SCR.Write(path(".sysconfig.SuSEfirewall2.FW_ROUTE", "yes")
+                 if is_gate
+                     SCR.Write(path(".sysconfig.SuSEfirewall2.FW_DEV_EXT", extdev)
+                 end
+                 SCR.Write(path(".sysconfig.SuSEfirewall2.FW_DEV_INT", intdev)
+                 SCR.Write(path(".sysconfig.SuSEfirewall2.FW_DEV_INT",nil)
+                 SCR.Write(path(".sysconfig.SuSEfirewall2", "yes")
                  SCR.Write(path(".etc.dhcpd.DHCPD_INTERFACE"), intdev)
                  SCR.Write(path(".etc.dhcpd"), nil)
                  domain = SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN"))
@@ -259,8 +266,8 @@ module OSS
 #                                       prin   => ["printserver." + domain + " printserver" ],
 #                                       prox   => ["proxy."       + domain + " proxy" ],
 #                                       backup => ["backup."      + domain + " backup" ],
-#       				ext_ip => ["extip"],
-#					216.239.32.20  => [ "www.google.de","www.google.com","www.google.fr","www.google.it","www.google.hu","www.google.en" ]
+#                                       ext_ip => ["extip"],
+#                                        216.239.32.20  => [ "www.google.de","www.google.com","www.google.fr","www.google.it","www.google.hu","www.google.en" ]
 #                                  })
 #                else
 #                  Ops.set(host_tmp, "hosts", {
@@ -269,15 +276,15 @@ module OSS
 #                                       prin   => ["printserver." + domain + " printserver" ],
 #                                       prox   => ["proxy."       + domain + " proxy" ],
 #                                       backup => ["backup."      + domain + " backup" ],
-#					216.239.32.20  => [ "www.google.de","www.google.com","www.google.fr","www.google.it","www.google.hu","www.google.en" ]
+#                                        216.239.32.20  => [ "www.google.de","www.google.com","www.google.fr","www.google.it","www.google.hu","www.google.en" ]
 #                                  })
 #                Host.Import(host_tmp)
-		 fw_int_dev = Y2Firewall::Firewalld::Interface.new(intdev)
-                 fw_int_dev.zone="trusted"
+#                 fw_int_dev = Y2Firewall::Firewalld::Interface.new(intdev)
+#                 fw_int_dev.zone="trusted"
                  if is_gate
                     #Configure external interface
-                    fw_ext_dev = Y2Firewall::Firewalld::Interface.new(extdev)
-                    fw_ext_dev.zone="external"
+#                   fw_ext_dev = Y2Firewall::Firewalld::Interface.new(extdev)
+#                   fw_ext_dev.zone="external"
                     if NetworkInterfaces.Check(extdev)
                       NetworkInterfaces.Edit(extdev)
                     else
@@ -318,11 +325,11 @@ host_tmp = "#
 216.239.32.20  www.google.de www.google.com www.google.fr www.google.it www.google.hu www.google.en
 185.3.232.240  repo.cephalix.eu
 "
-		 if is_gate
-			host_tmp = host_tmp + ext_ip + " extip
+                 if is_gate
+                        host_tmp = host_tmp + ext_ip + " extip
 "
-		 end
-		 File.write("/etc/hosts",host_tmp)
+                 end
+                 File.write("/etc/hosts",host_tmp)
                  ret = :write
                  break
               end #end when :next
@@ -348,12 +355,12 @@ host_tmp = "#
                 "other"          => _("Other School Type"),
                 "administration" => _("Administration"),
                 "business"       => _("Company")
-	    }
+            }
 
-	    #if OSRelease.ReleaseName == 'CEPHALIX'
-	    if Package.Installed("patterns-oss-cephalix")
-	        instTypes =  { "cephalix" => _("CEPHALIX") }
-	    end
+            #if OSRelease.ReleaseName == 'CEPHALIX'
+            if Package.Installed("patterns-oss-cephalix")
+                instTypes =  { "cephalix" => _("CEPHALIX") }
+            end
 
             itemlist = []
             Builtins.foreach(instTypes) do |k, v|
@@ -391,34 +398,34 @@ host_tmp = "#
                        HWeight( 1, ComboBox(Id(:net0),Opt(:notify),"Internal Network",["172","10","192"])),
                        ReplacePoint( Id(:rep_net1),HWeight( 1,ComboBox(Id(:net1)," ",lnet1("172",16)))),
                        ReplacePoint( Id(:rep_nm),  HWeight( 1,ComboBox(Id(:netm),Opt(:notify),_("Netmask"),lnetmask("172")))),
-		       HStretch(10)
-	            )),
-	            VSpacing(1),
-		    HBox(
-		       HSpacing(8),
-		       Left(CheckBox(Id(:expert_settings),Opt(:notify),  _("Expert Settings"), false)),HStretch()
-		    ),
-		    Left(HBox(
-		       HSpacing(8),
-		       HWeight( 1, InputField(Id(:expert_admin),   _("Server IP"),"")),HSpacing(1),
-		       HWeight( 1, InputField(Id(:expert_portal),  _("Portal IP"),"")),HSpacing(1),
-		       HWeight( 1, InputField(Id(:expert_proxy),   _("Proxy IP"),"")),HSpacing(1),
-		       HWeight( 1, InputField(Id(:expert_print),   _("Printserver IP"),"")),HSpacing(1),
-		    )),
-		    Left(HBox(
-		       HSpacing(8),
-		       HWeight( 1, InputField(Id(:expert_network), _("Internal Network"),"")),HSpacing(1),
-		       HWeight( 1, ComboBox(Id(:expert_netmask),   _("Netmask"),lnetmask("expert"))),HSpacing(1),
-		       HWeight( 1, ComboBox(Id(:expert_server_nm), _("Servernet Netmask"),lnetmask("expert"))),
-		       HWeight( 1, InputField(Id(:expert_backup),  _("Backup IP"),"")),
-	            )),
-		    Left(HBox(
-		       HSpacing(8),
-		       HWeight( 1, InputField(Id(:expert_anon),   _("ANON_DHCP Start IP"),"")),HSpacing(1),
-		       HWeight( 1, ComboBox(Id(:expert_anon_nm),  _("ANON_DHCP Netmask"),lnetmask("expert"))),HSpacing(1),
-		       HWeight( 1, InputField(Id(:expert_first),  _("First Room IP"),"")),
-		       HWeight( 1, Label(""))
-		    )),
+                       HStretch(10)
+                    )),
+                    VSpacing(1),
+                    HBox(
+                       HSpacing(8),
+                       Left(CheckBox(Id(:expert_settings),Opt(:notify),  _("Expert Settings"), false)),HStretch()
+                    ),
+                    Left(HBox(
+                       HSpacing(8),
+                       HWeight( 1, InputField(Id(:expert_admin),   _("Server IP"),"")),HSpacing(1),
+                       HWeight( 1, InputField(Id(:expert_portal),  _("Portal IP"),"")),HSpacing(1),
+                       HWeight( 1, InputField(Id(:expert_proxy),   _("Proxy IP"),"")),HSpacing(1),
+                       HWeight( 1, InputField(Id(:expert_print),   _("Printserver IP"),"")),HSpacing(1),
+                    )),
+                    Left(HBox(
+                       HSpacing(8),
+                       HWeight( 1, InputField(Id(:expert_network), _("Internal Network"),"")),HSpacing(1),
+                       HWeight( 1, ComboBox(Id(:expert_netmask),   _("Netmask"),lnetmask("expert"))),HSpacing(1),
+                       HWeight( 1, ComboBox(Id(:expert_server_nm), _("Servernet Netmask"),lnetmask("expert"))),
+                       HWeight( 1, InputField(Id(:expert_backup),  _("Backup IP"),"")),
+                    )),
+                    Left(HBox(
+                       HSpacing(8),
+                       HWeight( 1, InputField(Id(:expert_anon),   _("ANON_DHCP Start IP"),"")),HSpacing(1),
+                       HWeight( 1, ComboBox(Id(:expert_anon_nm),  _("ANON_DHCP Netmask"),lnetmask("expert"))),HSpacing(1),
+                       HWeight( 1, InputField(Id(:expert_first),  _("First Room IP"),"")),
+                       HWeight( 1, Label(""))
+                    )),
                     VSpacing(1),
                     HBox(
                        HSpacing(8),
@@ -444,17 +451,17 @@ host_tmp = "#
             UI.SetFocus(Id(:schoolname))
             valid_domain_chars = ".0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-"
             UI.ChangeWidget(Id(:domain), :ValidChars, valid_domain_chars)
-	    UI.ChangeWidget(Id(:expert_network), :Enabled, false)
-	    UI.ChangeWidget(Id(:expert_netmask), :Enabled, false)
-	    UI.ChangeWidget(Id(:expert_server_nm), :Enabled, false)
-	    UI.ChangeWidget(Id(:expert_anon), :Enabled, false)
-	    UI.ChangeWidget(Id(:expert_anon_nm), :Enabled, false)
-	    UI.ChangeWidget(Id(:expert_admin), :Enabled, false)
-	    UI.ChangeWidget(Id(:expert_portal), :Enabled, false)
-	    UI.ChangeWidget(Id(:expert_proxy), :Enabled, false)
-	    UI.ChangeWidget(Id(:expert_print), :Enabled, false)
-	    UI.ChangeWidget(Id(:expert_backup), :Enabled, false)
-	    UI.ChangeWidget(Id(:expert_first), :Enabled, false)
+            UI.ChangeWidget(Id(:expert_network), :Enabled, false)
+            UI.ChangeWidget(Id(:expert_netmask), :Enabled, false)
+            UI.ChangeWidget(Id(:expert_server_nm), :Enabled, false)
+            UI.ChangeWidget(Id(:expert_anon), :Enabled, false)
+            UI.ChangeWidget(Id(:expert_anon_nm), :Enabled, false)
+            UI.ChangeWidget(Id(:expert_admin), :Enabled, false)
+            UI.ChangeWidget(Id(:expert_portal), :Enabled, false)
+            UI.ChangeWidget(Id(:expert_proxy), :Enabled, false)
+            UI.ChangeWidget(Id(:expert_print), :Enabled, false)
+            UI.ChangeWidget(Id(:expert_backup), :Enabled, false)
+            UI.ChangeWidget(Id(:expert_first), :Enabled, false)
  
             ret = nil
             while true
@@ -473,33 +480,33 @@ host_tmp = "#
                    UI.ChangeWidget(Id(:net0), :Enabled, false)
                    UI.ChangeWidget(Id(:net1), :Enabled, false)
                    UI.ChangeWidget(Id(:netm), :Enabled, false)
-		   UI.ChangeWidget(Id(:expert_network), :Enabled, true)
-		   UI.ChangeWidget(Id(:expert_netmask), :Enabled, true)
-		   UI.ChangeWidget(Id(:expert_server_nm), :Enabled, true)
-		   UI.ChangeWidget(Id(:expert_anon), :Enabled, true)
-		   UI.ChangeWidget(Id(:expert_anon_nm), :Enabled, true)
-		   UI.ChangeWidget(Id(:expert_admin), :Enabled, true)
-		   UI.ChangeWidget(Id(:expert_portal), :Enabled, true)
-		   UI.ChangeWidget(Id(:expert_proxy), :Enabled, true)
-		   UI.ChangeWidget(Id(:expert_print), :Enabled, true)
-		   UI.ChangeWidget(Id(:expert_backup), :Enabled, true)
-	           UI.ChangeWidget(Id(:expert_first), :Enabled, true)
+                   UI.ChangeWidget(Id(:expert_network), :Enabled, true)
+                   UI.ChangeWidget(Id(:expert_netmask), :Enabled, true)
+                   UI.ChangeWidget(Id(:expert_server_nm), :Enabled, true)
+                   UI.ChangeWidget(Id(:expert_anon), :Enabled, true)
+                   UI.ChangeWidget(Id(:expert_anon_nm), :Enabled, true)
+                   UI.ChangeWidget(Id(:expert_admin), :Enabled, true)
+                   UI.ChangeWidget(Id(:expert_portal), :Enabled, true)
+                   UI.ChangeWidget(Id(:expert_proxy), :Enabled, true)
+                   UI.ChangeWidget(Id(:expert_print), :Enabled, true)
+                   UI.ChangeWidget(Id(:expert_backup), :Enabled, true)
+                   UI.ChangeWidget(Id(:expert_first), :Enabled, true)
                 else
                    UI.ChangeWidget(Id(:net0), :Enabled, true)
                    UI.ChangeWidget(Id(:net1), :Enabled, true)
                    UI.ChangeWidget(Id(:netm), :Enabled, true)
-		   UI.ChangeWidget(Id(:expert_network), :Enabled, false)
-		   UI.ChangeWidget(Id(:expert_netmask), :Enabled, false)
-		   UI.ChangeWidget(Id(:expert_server_nm), :Enabled, false)
-		   UI.ChangeWidget(Id(:expert_anon), :Enabled, false)
-		   UI.ChangeWidget(Id(:expert_anon_nm), :Enabled, false)
-		   UI.ChangeWidget(Id(:expert_admin), :Enabled, false)
-		   UI.ChangeWidget(Id(:expert_portal), :Enabled, false)
-		   UI.ChangeWidget(Id(:expert_proxy), :Enabled, false)
-		   UI.ChangeWidget(Id(:expert_print), :Enabled, false)
-		   UI.ChangeWidget(Id(:expert_backup), :Enabled, false)
-	           UI.ChangeWidget(Id(:expert_first), :Enabled, false)
-		end
+                   UI.ChangeWidget(Id(:expert_network), :Enabled, false)
+                   UI.ChangeWidget(Id(:expert_netmask), :Enabled, false)
+                   UI.ChangeWidget(Id(:expert_server_nm), :Enabled, false)
+                   UI.ChangeWidget(Id(:expert_anon), :Enabled, false)
+                   UI.ChangeWidget(Id(:expert_anon_nm), :Enabled, false)
+                   UI.ChangeWidget(Id(:expert_admin), :Enabled, false)
+                   UI.ChangeWidget(Id(:expert_portal), :Enabled, false)
+                   UI.ChangeWidget(Id(:expert_proxy), :Enabled, false)
+                   UI.ChangeWidget(Id(:expert_print), :Enabled, false)
+                   UI.ChangeWidget(Id(:expert_backup), :Enabled, false)
+                   UI.ChangeWidget(Id(:expert_first), :Enabled, false)
+                end
               when :net0
                  net = Convert.to_string(UI.QueryWidget(Id(:net0),    :Value))
                  nm  = Convert.to_integer(UI.QueryWidget(Id(:netm),   :Value))
@@ -514,8 +521,8 @@ host_tmp = "#
              when :next
                  if Convert.to_boolean(UI.QueryWidget(Id(:expert_settings),   :Value))
                    netm  = Convert.to_string(UI.QueryWidget(Id(:expert_netmask),   :Value))
-		   nets  = Convert.to_string(UI.QueryWidget(Id(:expert_network),   :Value))
-		   admin = Convert.to_string(UI.QueryWidget(Id(:expert_admin),    :Value))
+                   nets  = Convert.to_string(UI.QueryWidget(Id(:expert_network),   :Value))
+                   admin = Convert.to_string(UI.QueryWidget(Id(:expert_admin),    :Value))
                    SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK"),      netm )
                    SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK_STRING"), Netmask.FromBits(netm.to_i) )
                    SCR.Write(path(".etc.schoolserver.SCHOOL_NETWORK"),      nets )
@@ -524,15 +531,15 @@ host_tmp = "#
                    SCR.Write(path(".etc.schoolserver.SCHOOL_PRINTSERVER"),  Convert.to_string(UI.QueryWidget(Id(:expert_print),    :Value)) )
                    SCR.Write(path(".etc.schoolserver.SCHOOL_PROXY"),        Convert.to_string(UI.QueryWidget(Id(:expert_proxy),    :Value)) )
                    SCR.Write(path(".etc.schoolserver.SCHOOL_BACKUP_SERVER"),Convert.to_string(UI.QueryWidget(Id(:expert_backup),   :Value)) )
-		   anon_start = Convert.to_string(UI.QueryWidget(Id(:expert_anon),    :Value))
-		   anon_nm    = Convert.to_string(UI.QueryWidget(Id(:expert_anon_nm), :Value))
-		   anon_end   = IP.ComputeBroadcast(anon_start,Netmask.FromBits(anon_nm.to_i))
-		   anon_start = IP.ComputeNetwork(anon_start,  Netmask.FromBits(anon_nm.to_i))
+                   anon_start = Convert.to_string(UI.QueryWidget(Id(:expert_anon),    :Value))
+                   anon_nm    = Convert.to_string(UI.QueryWidget(Id(:expert_anon_nm), :Value))
+                   anon_end   = IP.ComputeBroadcast(anon_start,Netmask.FromBits(anon_nm.to_i))
+                   anon_start = IP.ComputeNetwork(anon_start,  Netmask.FromBits(anon_nm.to_i))
                    SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), anon_start + " " + anon_end)
                    SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_NET"),   anon_start + "/" + anon_nm )
                    SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"), Convert.to_string(UI.QueryWidget(Id(:expert_first),   :Value)) )
-		   server_nm    = Convert.to_string(UI.QueryWidget(Id(:expert_server_nm), :Value))
-		   server_start = IP.ComputeNetwork(admin,  Netmask.FromBits(server_nm.to_i))
+                   server_nm    = Convert.to_string(UI.QueryWidget(Id(:expert_server_nm), :Value))
+                   server_start = IP.ComputeNetwork(admin,  Netmask.FromBits(server_nm.to_i))
                    SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"), server_start + "/" + server_nm )
                  else
                    net0 = Convert.to_string(UI.QueryWidget(Id(:net0),   :Value))
@@ -559,7 +566,7 @@ host_tmp = "#
                         SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"),  nets.chomp("0.0") + "2.0" )
                         SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"),      nets.chomp("0")   + "0/24" )
                    end
-		 end
+                 end
                  domain = Convert.to_string(UI.QueryWidget(Id(:domain),:Value))
                  if domain.split(".").size < 2
                     msg = Builtins.sformat(_("'%1' is an invalid Domain Name. Use something like school.edu."), domain)
@@ -567,17 +574,17 @@ host_tmp = "#
                     UI.SetFocus(Id(:domain))
                     next
                  end
-		 if domain.match('\.local$') 
+                 if domain.match('\.local$') 
                     msg = Builtins.sformat(_("'%1' is an invalid Domain Name. Use something like school.edu."), domain)
                     Popup.Error(msg)
                     UI.SetFocus(Id(:domain))
                     next
                  end
-		 #Evaluate workgroup. This must not be longer then 15 Char
-		 workgroup=domain.split(".")[0].upcase
-		 if workgroup.size > 15
-		    workgroup=GetWorkgroup()
-		 end
+                 #Evaluate workgroup. This must not be longer then 15 Char
+                 workgroup=domain.split(".")[0].upcase
+                 if workgroup.size > 15
+                    workgroup=GetWorkgroup()
+                 end
                  SCR.Write(path(".etc.schoolserver.SCHOOL_NAME"),         Convert.to_string(UI.QueryWidget(Id(:schoolname),:Value)))
                  SCR.Write(path(".etc.schoolserver.SCHOOL_DOMAIN"),       domain )
                  SCR.Write(path(".etc.schoolserver.SCHOOL_WORKGROUP"),    workgroup )
@@ -679,8 +686,8 @@ host_tmp = "#
                         Popup.Error(_("The passsword must not contains more then 14 character."))
                         next
                     end
-		    o,s = Open3.capture2("/usr/share/oss/tools/check_password_complexity.sh", :stdin_data => pass)
-		    if( o.size > 0 )
+                    o,s = Open3.capture2("/usr/share/oss/tools/check_password_complexity.sh", :stdin_data => pass)
+                    if( o.size > 0 )
                         Popup.Error(_(o))
                         next
                     end
@@ -693,18 +700,18 @@ host_tmp = "#
             #UI.CloseDialog
         end
 
-	def GetWorkgroup
-	    workgroup = ""
+        def GetWorkgroup
+            workgroup = ""
             UI.OpenDialog(
                 Opt(:decorated),
                 VBox(
-		     Left(
-		        RichText(
-				Opt(:hstretch),
-			       _("The workgroup name calculated from domain name is invalid.<br>") +
-			       _("Please provide a valid one. This must not be longer then 15.")
-		     )),
-		     Left(InputField(Id(:workgroup), Opt(:hstretch), _("Workgroup"), "")),
+                     Left(
+                        RichText(
+                                Opt(:hstretch),
+                               _("The workgroup name calculated from domain name is invalid.<br>") +
+                               _("Please provide a valid one. This must not be longer then 15.")
+                     )),
+                     Left(InputField(Id(:workgroup), Opt(:hstretch), _("Workgroup"), "")),
                      HBox(
                         PushButton(Id(:ok), _("OK"))
                      )
@@ -715,24 +722,24 @@ host_tmp = "#
                 ret = Ops.get(event, "ID")
                 if ret == :ok
                     workgroup = Convert.to_string( UI.QueryWidget(Id(:workgroup), :Value) )
-		    if workgroup.size > 15
-		        Popup.Error(_("The workgroup name must not be longer then 15."))
-			next
-		    end
-		    if workgroup.size < 3
-			Popup.Error(_("The workgroup name must not be shorter then 3."))
-			next
-		    end
-		    if workgroup[0] == '*'
-			Popup.Error(_("The workgroup name must not start with '*'"))
-			next
-		    end
-		    break
-		end
-	    end
+                    if workgroup.size > 15
+                        Popup.Error(_("The workgroup name must not be longer then 15."))
+                        next
+                    end
+                    if workgroup.size < 3
+                        Popup.Error(_("The workgroup name must not be shorter then 3."))
+                        next
+                    end
+                    if workgroup[0] == '*'
+                        Popup.Error(_("The workgroup name must not start with '*'"))
+                        next
+                    end
+                    break
+                end
+            end
             UI.CloseDialog
-	    return workgroup.upcase
-	end
+            return workgroup.upcase
+        end
 
         #Some internal use only functions
         :privat
