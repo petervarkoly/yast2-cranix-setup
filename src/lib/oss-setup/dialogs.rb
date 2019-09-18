@@ -239,10 +239,10 @@ module OSS
                  NetworkInterfaces.Commit
                  # We write the internal device every time as internal device.
                  if is_gate
-                     SCR.Write(path(".sysconfig.SuSEfirewall2.FW_ROUTE", "yes"))
-                     SCR.Write(path(".sysconfig.SuSEfirewall2.FW_DEV_EXT", extdev)
+                     SCR.Write(path(".sysconfig.SuSEfirewall2.FW_ROUTE"), "yes")
+                     SCR.Write(path(".sysconfig.SuSEfirewall2.FW_DEV_EXT"), extdev)
                  end
-                 SCR.Write(path(".sysconfig.SuSEfirewall2.FW_DEV_INT", intdev))
+                 SCR.Write(path(".sysconfig.SuSEfirewall2.FW_DEV_INT"), intdev)
                  SCR.Write(path(".sysconfig.SuSEfirewall2", nil)
                  SCR.Write(path(".etc.dhcpd.DHCPD_INTERFACE"), intdev)
                  SCR.Write(path(".etc.dhcpd"), nil)
