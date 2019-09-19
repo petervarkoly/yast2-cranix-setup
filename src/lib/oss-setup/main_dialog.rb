@@ -75,6 +75,7 @@ module OSS
                      break
                 end
             end
+	    SCR.Execute(path(".target.bash"), "rm -rf /var/lib/YaST2/reconfig_system")
             return :next
         end
         
