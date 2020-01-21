@@ -29,6 +29,9 @@ module OSS
             Builtins.y2milestone("initialize OSS started")
             @readBackup = false
             Wizard.OpenNextBackStepsDialog()
+	    SCR.Read(path(".sysconfig.network.config"))
+	    SCR.Write(path(".sysconfig.network.config.LINK_REQUIRED","no"))
+	    SCR.Write(path(".sysconfig.network.config"),nil)
             Lan.Read(:nocache)
             Builtins.y2milestone("initialize OSS finished")
         end
