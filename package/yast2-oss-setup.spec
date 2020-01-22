@@ -16,12 +16,12 @@
 #
 
 Name:           yast2-oss-setup
-Version:	4.1.0
+Version:	%_oss_version
 Release:	0
 License:	MIT
 Summary:	Setup for OSS
 Url:		www.cephalix.eu
-Vendor:		Dipl. Ing. Peter Varkoly
+Vendor:		%_oss_vendor
 Group:		System/YaS
 Source:		%{name}-%{version}.tar.bz2
 BuildRequires:	yast2 yast2-ruby-bindings yast2-devtools
@@ -33,6 +33,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 %description
 Setup for OSS
 
+%_oss_author
 
 %prep
 %setup -q
