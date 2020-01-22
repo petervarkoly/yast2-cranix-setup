@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-oss-setup
-Version:	%_oss_version
+Version:	4.1.0
 Release:	0
 License:	MIT
 Summary:	Setup for OSS
