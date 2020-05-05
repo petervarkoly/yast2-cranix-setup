@@ -6,9 +6,6 @@
 
 require 'yast'
 require 'ui/dialog'
-#require "y2firewall/firewalld"
-#require "y2firewall/helpers/interfaces"
-#require "y2firewall/firewalld/interface"
 require "open3"
 
 
@@ -20,7 +17,7 @@ Yast.import 'Netmask'
 Yast.import 'IP'
 Yast.import "OSRelease"
 
-module OSS
+module CRANIX
     class Dialogs
         include Yast
         include UIShortcuts
@@ -28,17 +25,17 @@ module OSS
         include Logger
 
         def initialize
-            textdomain 'oss'
+            textdomain 'cranix'
             true
         end
 
         def ReadBackupDialog
-          Builtins.y2milestone("-- OSS-Setup ReadBackupDialog Called --")
+          Builtins.y2milestone("-- CRANIX-Setup ReadBackupDialog Called --")
           backup = Popup.YesNoHeadline(
-            _("Do you want to read the configuration of another OSS?"),
-            _("You can save the /etc/sysconfig/schoolserver file from another OSS without path on an USB media.\n") +
-            _("If you have created a backup from an OSS this backup also contains this file.\n") +
-            _("If the backup is on an external HD, you can connect this HD to allow the OSS to read the configuration.\n")
+            _("Do you want to read the configuration of another CRANIX?"),
+            _("You can save the /etc/sysconfig/cranix file from another CRANIX without path on an USB media.\n") +
+            _("If you have created a backup from an CRANIX this backup also contains this file.\n") +
+            _("If the backup is on an external HD, you can connect this HD to allow the CRANIX to read the configuration.\n")
           )
           return false if !backup
           while true
@@ -61,15 +58,15 @@ module OSS
 
         #Card Dialog
         def CardDialog()
-            Builtins.y2milestone("-- OSS-Setup CardDialog Called --")
+            Builtins.y2milestone("-- CRANIX-Setup CardDialog Called --")
             cards = read_net_cards("")
             # Dialog help
-            help = _("Select the Network Card for the OSS and enter the IP-Address of the Default Gateway.") +
+            help = _("Select the Network Card for the CRANIX and enter the IP-Address of the Default Gateway.") +
                    _("If yo can not identify the cards push or remove network cabel from a device.") + 
                    _("After them you can push 'Reload Network Cards' and you can see the changes if the device is connected.")
-            is_gate = SCR.Read(path(".etc.schoolserver.SCHOOL_ISGATE")) == "yes" ? true : false
+            is_gate = SCR.Read(path(".etc.cranix.CRANIX_ISGATE")) == "yes" ? true : false
             if is_gate
-               help = _("Select the Network Cards for OSS.")
+               help = _("Select the Network Cards for CRANIX.")
                       _("If yo can not identify the cards push or remove network cabel from a device.") + 
                       _("After them you can push 'Reload Network Cards' and you can see the changes if the device is connected.")
             end
@@ -141,12 +138,12 @@ module OSS
                     UI.ReplaceWidget(Id(:rep_net1),SelectionBox(Id(:intdev), _("A&vailable Network Cards:"), cards ))
                  end
               when :next
-                     ip = SCR.Read(path(".etc.schoolserver.SCHOOL_SERVER")) 
-                   mail = SCR.Read(path(".etc.schoolserver.SCHOOL_MAILSERVER")) 
-                   prox = SCR.Read(path(".etc.schoolserver.SCHOOL_PROXY")) 
-                   prin = SCR.Read(path(".etc.schoolserver.SCHOOL_PRINTSERVER")) 
-                 backup = SCR.Read(path(".etc.schoolserver.SCHOOL_BACKUP_SERVER")) 
-                     nm = SCR.Read(path(".etc.schoolserver.SCHOOL_NETMASK")) 
+                     ip = SCR.Read(path(".etc.cranix.CRANIX_SERVER")) 
+                   mail = SCR.Read(path(".etc.cranix.CRANIX_MAILSERVER")) 
+                   prox = SCR.Read(path(".etc.cranix.CRANIX_PROXY")) 
+                   prin = SCR.Read(path(".etc.cranix.CRANIX_PRINTSERVER")) 
+                 backup = SCR.Read(path(".etc.cranix.CRANIX_BACKUP_SERVER")) 
+                     nm = SCR.Read(path(".etc.cranix.CRANIX_NETMASK")) 
                  intdev = Yast::UI.QueryWidget(Id(:intdev), :CurrentItem)
                  def_gw = Yast::UI.QueryWidget(Id(:def_gw), :Value)
                  extdev = nil
@@ -181,19 +178,19 @@ module OSS
                        UI.SetFocus(Id(:def_gw))
                        next
                     end
-                    SCR.Write(path(".etc.schoolserver.SCHOOL_NET_GATEWAY"),   ip )
-                    SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_EXT_IP"), ext_ip )
-                    SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_EXT_GW"), def_gw )
-                    SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_EXT_NETMASK"), ext_nm )
+                    SCR.Write(path(".etc.cranix.CRANIX_NET_GATEWAY"),   ip )
+                    SCR.Write(path(".etc.cranix.CRANIX_SERVER_EXT_IP"), ext_ip )
+                    SCR.Write(path(".etc.cranix.CRANIX_SERVER_EXT_GW"), def_gw )
+                    SCR.Write(path(".etc.cranix.CRANIX_SERVER_EXT_NETMASK"), ext_nm )
                  else
                     if !IsInNetwork(ip,Netmask.FromBits(nm.to_i),def_gw)
                        Popup.Error(_("The IP address for the gateway is not in the internal network."))
                        UI.SetFocus(Id(:def_gw))
                        next
                     end
-                    SCR.Write(path(".etc.schoolserver.SCHOOL_NET_GATEWAY"), def_gw )
+                    SCR.Write(path(".etc.cranix.CRANIX_NET_GATEWAY"), def_gw )
                  end #end if is_gate
-                 SCR.Write(path(".etc.schoolserver"),nil)
+                 SCR.Write(path(".etc.cranix"),nil)
                  #Now let's start configuring network
                  Routing.Forward_v4 = false
                  Routing.Forward_v6 = false
@@ -246,9 +243,9 @@ module OSS
                  SCR.Write(path(".sysconfig.SuSEfirewall2"), nil)
                  SCR.Write(path(".etc.dhcpd.DHCPD_INTERFACE"), intdev)
                  SCR.Write(path(".etc.dhcpd"), nil)
-                 domain = SCR.Read(path(".etc.schoolserver.SCHOOL_DOMAIN"))
+                 domain = SCR.Read(path(".etc.cranix.CRANIX_DOMAIN"))
                  dns_tmp = DNS.Export
-                 serverName = SCR.Read(path(".etc.schoolserver.SCHOOL_NETBIOSNAME")) 
+                 serverName = SCR.Read(path(".etc.cranix.CRANIX_NETBIOSNAME")) 
                  Ops.set(dns_tmp, "hostname",    serverName )
                  Ops.set(dns_tmp, "domain",      domain )
                  Ops.set(dns_tmp, "nameservers", [ "127.0.0.1" ] )
@@ -339,10 +336,10 @@ host_tmp = "#
 
         #Basic Settings Dialog
         def BasicSetting
-            Builtins.y2milestone("-- OSS-Setup BasicSetting Called --")
+            Builtins.y2milestone("-- CRANIX-Setup BasicSetting Called --")
             # Dialog help
             help    = _("Some help for basic settings.")
-            caption = _("OSS Configuration.")
+            caption = _("CRANIX Configuration.")
             instTypes = {
                 "work"           => _("work"),
                 "global"         => _("Global School"),
@@ -357,7 +354,7 @@ host_tmp = "#
             }
 
             #if OSRelease.ReleaseName == 'CEPHALIX'
-            if Package.Installed("patterns-oss-cephalix")
+            if Package.Installed("patterns-cranix-cephalix")
                 instTypes =  { "cephalix" => _("CEPHALIX") }
             end
 
@@ -373,7 +370,7 @@ host_tmp = "#
                      HSpacing(8),
                      VBox(
                         VSpacing(1),
-                        Left(InputField(Id(:schoolname), Opt(:hstretch), _("Name of the &Institute"), "NAME")),
+                        Left(InputField(Id(:cranixname), Opt(:hstretch), _("Name of the &Institute"), "NAME")),
                         VSpacing(1),
                         Left(ComboBox(Id(:type),         Opt(:hstretch), _("Selection of the Type of the Institute"), itemlist)),
                         VSpacing(1)
@@ -383,7 +380,7 @@ host_tmp = "#
                         VSpacing(1),
                         Left(InputField(Id(:regcode),    Opt(:hstretch), _("&Registration Code"),"NOT YET REGISTERED ")),
                         VSpacing(1),
-                        Left(InputField(Id(:domain),     Opt(:hstretch), _("&Domain name for the OSS."),"DNSDOMAIN")),
+                        Left(InputField(Id(:domain),     Opt(:hstretch), _("&Domain name for the CRANIX."),"DNSDOMAIN")),
                         VSpacing(1)
                      ),
                      HSpacing(8)
@@ -430,7 +427,7 @@ host_tmp = "#
                        HSpacing(8),
                        Left(CheckBox(Id(:use_dhcp), _("Enable DHCP Server"), true )),
                        HSpacing(8),
-                       Left(CheckBox(Id(:is_gate),  _("The OSS is the Gateway"), true )),
+                       Left(CheckBox(Id(:is_gate),  _("The CRANIX is the Gateway"), true )),
                        HSpacing(8)
                     ),
                     VSpacing(1)
@@ -447,7 +444,7 @@ host_tmp = "#
               Label.BackButton,
               Label.NextButton
             )
-            UI.SetFocus(Id(:schoolname))
+            UI.SetFocus(Id(:cranixname))
             valid_domain_chars = ".0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-"
             UI.ChangeWidget(Id(:domain), :ValidChars, valid_domain_chars)
             UI.ChangeWidget(Id(:expert_network), :Enabled, false)
@@ -522,59 +519,59 @@ host_tmp = "#
                    netm  = Convert.to_string(UI.QueryWidget(Id(:expert_netmask),   :Value))
                    nets  = Convert.to_string(UI.QueryWidget(Id(:expert_network),   :Value))
                    admin = Convert.to_string(UI.QueryWidget(Id(:expert_admin),    :Value))
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK"),      netm )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK_STRING"), Netmask.FromBits(netm.to_i) )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_NETWORK"),      nets )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER"),       admin )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_MAILSERVER"),   Convert.to_string(UI.QueryWidget(Id(:expert_portal),   :Value)) )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_PRINTSERVER"),  Convert.to_string(UI.QueryWidget(Id(:expert_print),    :Value)) )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_PROXY"),        Convert.to_string(UI.QueryWidget(Id(:expert_proxy),    :Value)) )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_BACKUP_SERVER"),Convert.to_string(UI.QueryWidget(Id(:expert_backup),   :Value)) )
+                   SCR.Write(path(".etc.cranix.CRANIX_NETMASK"),      netm )
+                   SCR.Write(path(".etc.cranix.CRANIX_NETMASK_STRING"), Netmask.FromBits(netm.to_i) )
+                   SCR.Write(path(".etc.cranix.CRANIX_NETWORK"),      nets )
+                   SCR.Write(path(".etc.cranix.CRANIX_SERVER"),       admin )
+                   SCR.Write(path(".etc.cranix.CRANIX_MAILSERVER"),   Convert.to_string(UI.QueryWidget(Id(:expert_portal),   :Value)) )
+                   SCR.Write(path(".etc.cranix.CRANIX_PRINTSERVER"),  Convert.to_string(UI.QueryWidget(Id(:expert_print),    :Value)) )
+                   SCR.Write(path(".etc.cranix.CRANIX_PROXY"),        Convert.to_string(UI.QueryWidget(Id(:expert_proxy),    :Value)) )
+                   SCR.Write(path(".etc.cranix.CRANIX_BACKUP_SERVER"),Convert.to_string(UI.QueryWidget(Id(:expert_backup),   :Value)) )
                    anon_start = Convert.to_string(UI.QueryWidget(Id(:expert_anon),    :Value))
                    anon_nm    = Convert.to_string(UI.QueryWidget(Id(:expert_anon_nm), :Value))
                    anon_end   = IP.ComputeBroadcast(anon_start,Netmask.FromBits(anon_nm.to_i))
                    anon_start = IP.ComputeNetwork(anon_start,  Netmask.FromBits(anon_nm.to_i))
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), anon_start + " " + anon_end)
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_NET"),   anon_start + "/" + anon_nm )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"), Convert.to_string(UI.QueryWidget(Id(:expert_first),   :Value)) )
+                   SCR.Write(path(".etc.cranix.CRANIX_ANON_DHCP_RANGE"), anon_start + " " + anon_end)
+                   SCR.Write(path(".etc.cranix.CRANIX_ANON_DHCP_NET"),   anon_start + "/" + anon_nm )
+                   SCR.Write(path(".etc.cranix.CRANIX_FIRST_ROOM_NET"), Convert.to_string(UI.QueryWidget(Id(:expert_first),   :Value)) )
                    server_nm    = Convert.to_string(UI.QueryWidget(Id(:expert_server_nm), :Value))
                    server_start = IP.ComputeNetwork(admin,  Netmask.FromBits(server_nm.to_i))
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"), server_start + "/" + server_nm )
+                   SCR.Write(path(".etc.cranix.CRANIX_SERVER_NET"), server_start + "/" + server_nm )
                  else
                    net0 = Convert.to_string(UI.QueryWidget(Id(:net0),   :Value))
                    net1 = Convert.to_string(UI.QueryWidget(Id(:net1),   :Value))
                    netm = Convert.to_string(UI.QueryWidget(Id(:netm),   :Value))
                    nets = net0 + "." + net1
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK"),      netm )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_NETMASK_STRING"), Netmask.FromBits(netm.to_i) )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_NETWORK"),      nets )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER"),       nets.chomp("0") + "2" )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_MAILSERVER"),   nets.chomp("0") + "3" )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_PRINTSERVER"),  nets.chomp("0") + "4" )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_PROXY"),        nets.chomp("0") + "5" )
-                   SCR.Write(path(".etc.schoolserver.SCHOOL_BACKUP_SERVER"),nets.chomp("0") + "6" )
+                   SCR.Write(path(".etc.cranix.CRANIX_NETMASK"),      netm )
+                   SCR.Write(path(".etc.cranix.CRANIX_NETMASK_STRING"), Netmask.FromBits(netm.to_i) )
+                   SCR.Write(path(".etc.cranix.CRANIX_NETWORK"),      nets )
+                   SCR.Write(path(".etc.cranix.CRANIX_SERVER"),       nets.chomp("0") + "2" )
+                   SCR.Write(path(".etc.cranix.CRANIX_MAILSERVER"),   nets.chomp("0") + "3" )
+                   SCR.Write(path(".etc.cranix.CRANIX_PRINTSERVER"),  nets.chomp("0") + "4" )
+                   SCR.Write(path(".etc.cranix.CRANIX_PROXY"),        nets.chomp("0") + "5" )
+                   SCR.Write(path(".etc.cranix.CRANIX_BACKUP_SERVER"),nets.chomp("0") + "6" )
                    case netm
                    when "24","23","22"
-                        SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), nets.chomp("0") + "32 " + nets.chomp("0") + "63" )
-                        SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_NET"),   nets.chomp("0") + "32/27" )
-                        SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"),  nets.chomp("0") + "64" )
-                        SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"),      nets.chomp("0") + "0/27" )
+                        SCR.Write(path(".etc.cranix.CRANIX_ANON_DHCP_RANGE"), nets.chomp("0") + "32 " + nets.chomp("0") + "63" )
+                        SCR.Write(path(".etc.cranix.CRANIX_ANON_DHCP_NET"),   nets.chomp("0") + "32/27" )
+                        SCR.Write(path(".etc.cranix.CRANIX_FIRST_ROOM_NET"),  nets.chomp("0") + "64" )
+                        SCR.Write(path(".etc.cranix.CRANIX_SERVER_NET"),      nets.chomp("0") + "0/27" )
                    else
-                        SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_RANGE"), nets.chomp("0.0") + "1.0 " + nets.chomp("0.0") + "1.255" )
-                        SCR.Write(path(".etc.schoolserver.SCHOOL_ANON_DHCP_NET"),   nets.chomp("0.0") + "1.0/24" )
-                        SCR.Write(path(".etc.schoolserver.SCHOOL_FIRST_ROOM_NET"),  nets.chomp("0.0") + "2.0" )
-                        SCR.Write(path(".etc.schoolserver.SCHOOL_SERVER_NET"),      nets.chomp("0")   + "0/24" )
+                        SCR.Write(path(".etc.cranix.CRANIX_ANON_DHCP_RANGE"), nets.chomp("0.0") + "1.0 " + nets.chomp("0.0") + "1.255" )
+                        SCR.Write(path(".etc.cranix.CRANIX_ANON_DHCP_NET"),   nets.chomp("0.0") + "1.0/24" )
+                        SCR.Write(path(".etc.cranix.CRANIX_FIRST_ROOM_NET"),  nets.chomp("0.0") + "2.0" )
+                        SCR.Write(path(".etc.cranix.CRANIX_SERVER_NET"),      nets.chomp("0")   + "0/24" )
                    end
                  end
                  domain = Convert.to_string(UI.QueryWidget(Id(:domain),:Value))
                  if domain.split(".").size < 2
-                    msg = Builtins.sformat(_("'%1' is an invalid Domain Name. Use something like school.edu."), domain)
+		    msg = Builtins.sformat(_("'%1' is an invalid Domain Name. Use something like cranix.eu."), domain)
                     Popup.Error(msg)
                     UI.SetFocus(Id(:domain))
                     next
                  end
                  if domain.match('\.local$') 
-                    msg = Builtins.sformat(_("'%1' is an invalid Domain Name. Use something like school.edu."), domain)
+                    msg = Builtins.sformat(_("'%1' is an invalid Domain Name. Use something like cranix.eu."), domain)
                     Popup.Error(msg)
                     UI.SetFocus(Id(:domain))
                     next
@@ -584,14 +581,14 @@ host_tmp = "#
                  if workgroup.size > 15
                     workgroup=GetWorkgroup()
                  end
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_NAME"),         Convert.to_string(UI.QueryWidget(Id(:schoolname),:Value)))
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_DOMAIN"),       domain )
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_WORKGROUP"),    workgroup )
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_REG_CODE"),     Convert.to_string(UI.QueryWidget(Id(:regcode),:Value)))
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_TYPE"),         Convert.to_string(UI.QueryWidget(Id(:type),:Value)))
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_ISGATE"),       Convert.to_boolean(UI.QueryWidget(Id(:is_gate),:Value)) ? "yes" : "no" )
-                 SCR.Write(path(".etc.schoolserver.SCHOOL_USE_DHCP"),     Convert.to_boolean(UI.QueryWidget(Id(:use_dhcp),:Value)) ? "yes" : "no" )
-                 SCR.Write(path(".etc.schoolserver"),nil)
+                 SCR.Write(path(".etc.cranix.CRANIX_NAME"),         Convert.to_string(UI.QueryWidget(Id(:cranixname),:Value)))
+                 SCR.Write(path(".etc.cranix.CRANIX_DOMAIN"),       domain )
+                 SCR.Write(path(".etc.cranix.CRANIX_WORKGROUP"),    workgroup )
+                 SCR.Write(path(".etc.cranix.CRANIX_REG_CODE"),     Convert.to_string(UI.QueryWidget(Id(:regcode),:Value)))
+                 SCR.Write(path(".etc.cranix.CRANIX_TYPE"),         Convert.to_string(UI.QueryWidget(Id(:type),:Value)))
+                 SCR.Write(path(".etc.cranix.CRANIX_ISGATE"),       Convert.to_boolean(UI.QueryWidget(Id(:is_gate),:Value)) ? "yes" : "no" )
+                 SCR.Write(path(".etc.cranix.CRANIX_USE_DHCP"),     Convert.to_boolean(UI.QueryWidget(Id(:use_dhcp),:Value)) ? "yes" : "no" )
+                 SCR.Write(path(".etc.cranix"),nil)
                  ret = :network
                  break
               end
@@ -599,11 +596,11 @@ host_tmp = "#
             return ret
         end
 
-        def OssSetup
+        def CranixSetup
 
-            Builtins.y2milestone("-- OSS-Setup dialogs.OssSetup Called --")
+            Builtins.y2milestone("-- CRANIX-Setup dialogs.CranixSetup Called --")
             Progress.New(
-                _("Saving the OSS configuration"),
+                _("Saving the CRANIX configuration"),
                 " ",
                 3,
                 [
@@ -633,15 +630,15 @@ host_tmp = "#
             Progress.set(true)
             Progress.NextStage
             Progress.off
-            SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --samba" )
+            SCR.Execute(path(".target.bash"), "/usr/share/cranix/setup/scripts/crx-setup.sh --passwdf=/tmp/passwd --samba" )
 
             Progress.set(true)
             Progress.NextStage
             Progress.off
-            if SCR.Read(path(".etc.schoolserver.SCHOOL_USE_DHCP")) == "yes"
-               SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts --dhcp --postsetup" )
+            if SCR.Read(path(".etc.cranix.CRANIX_USE_DHCP")) == "yes"
+               SCR.Execute(path(".target.bash"), "/usr/share/cranix/setup/scripts/crx-setup.sh --passwdf=/tmp/passwd --accounts --dhcp --postsetup" )
             else
-               SCR.Execute(path(".target.bash"), "/usr/share/oss/setup/scripts/oss-setup.sh --passwdf=/tmp/passwd --accounts --postsetup" )
+               SCR.Execute(path(".target.bash"), "/usr/share/cranix/setup/scripts/crx-setup.sh --passwdf=/tmp/passwd --accounts --postsetup" )
             end
             SCR.Execute(path(".target.bash"), "rm /tmp/passwd")
         end
@@ -685,7 +682,7 @@ host_tmp = "#
                         Popup.Error(_("The passsword must not contains more then 14 character."))
                         next
                     end
-                    o,s = Open3.capture2("/usr/share/oss/tools/check_password_complexity.sh", :stdin_data => pass)
+                    o,s = Open3.capture2("/usr/share/cranix/tools/check_password_complexity.sh", :stdin_data => pass)
                     if( o.size > 0 )
                         Popup.Error(_(o))
                         next
@@ -743,7 +740,7 @@ host_tmp = "#
         #Some internal use only functions
         :privat
         def read_net_cards(device)
-            Builtins.y2milestone("-- OSS-Setup read_net_cards Called --")
+            Builtins.y2milestone("-- CRANIX-Setup read_net_cards Called --")
             LanItems.Read()
             cards = []
             Builtins.foreach(
@@ -805,7 +802,7 @@ host_tmp = "#
         end
 
         def FindSysconfigFile
-          mountpoint = "/tmp/ossmount"
+          mountpoint = "/tmp/cranixmount"
           SCR.Execute( path(".target.bash"), Builtins.sformat("mkdir -p %1", mountpoint) )
           probe = Convert.convert(
             SCR.Read(path(".probe.usb")),
@@ -823,14 +820,14 @@ host_tmp = "#
                 if !Convert.to_boolean( SCR.Execute( path(".target.mount"), [dev, mountpoint], "-o shortname=mixed" ) )
                   WFM.Execute(path(".local.mount"), [dev, mountpoint])
                 end
-                Builtins.y2milestone("trying to find 'schoolserver' on %1", dev)
+                Builtins.y2milestone("trying to find 'cranix' on %1", dev)
                 if SCR.Read(
                     path(".target.lstat"),
-                    Ops.add(mountpoint, "/schoolserver")
+                    Ops.add(mountpoint, "/cranix")
                   ) != {}
                   Builtins.y2milestone("found")
                   ok = true
-                  SCR.Execute( path(".target.bash"), Ops.add( Ops.add("mkdir -p /var/adm/oss/; cp ", mountpoint), "/schoolserver /var/adm/oss/old-schoolserver" ) )
+                  SCR.Execute( path(".target.bash"), Ops.add( Ops.add("mkdir -p /var/adm/cranix/; cp ", mountpoint), "/cranix /var/adm/cranix/old-cranix" ) )
                   break
                 else
                   WFM.Execute(path(".local.umount"), mountpoint)

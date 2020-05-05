@@ -3,7 +3,7 @@
 # Copyright (c) 2017 Dipl. Ing. Peter Varkoly, Nuernberg, Germany.
 Yast.import 'Popup'
 module Yast
-  class InstOssCheckUpdate < Client
+  class InstCranixCheckUpdate < Client
     def main
         if !File.exist?("/mnt/home/archive/migrate-to-4-0/SAMBA/passdb.tdb")
                 Popup.Error(_("The update prepare script was not executed succesfully."))
@@ -14,5 +14,5 @@ module Yast
   end
 end
 
-Yast::InstOssCheckUpdate.new.main
+Yast::InstCranixCheckUpdate.new.main
 

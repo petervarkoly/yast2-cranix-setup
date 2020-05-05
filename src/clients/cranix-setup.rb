@@ -3,9 +3,9 @@
 # Copyright (c) 2017 Dipl. Ing. Peter Varkoly, Nuernberg, Germany.
 
 
-require "oss-setup/main_dialog"
+require "cranix-setup/main_dialog"
 
-include OSS
+include CRANIX
 
 MainDialog.new.run
 

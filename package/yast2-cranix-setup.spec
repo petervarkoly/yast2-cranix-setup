@@ -1,5 +1,5 @@
 #
-# spec file for package yast2-oss-setup
+# spec file for package yast2-cranix-setup
 #
 # Copyright (c) Peter Varkoly, Nuernberg, Germany.
 #
@@ -15,23 +15,23 @@
 # Please submit bugfixes or comments via http://bugs.cephalix.eu/
 #
 
-Name:           yast2-oss-setup
-Version:	4.1.0
+Name:           yast2-cranix-setup
+Version:	4.2.0
 Release:	0
 License:	MIT
-Summary:	Setup for OSS
+Summary:	Setup for CRANIX/CEPHALIX
 Url:		www.cephalix.eu
 Vendor:		Dipl. Ing. Peter Varkoly
-Group:		System/YaS
+Group:		System/YaST2
 Source:		%{name}-%{version}.tar.bz2
 BuildRequires:	yast2 yast2-ruby-bindings yast2-devtools
 BuildRequires:  rubygem(yast-rake) rubygem(rspec)
 Requires:       yast2
-Requires:	oss-base
+Requires:	cranix-base
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 %description
-Setup for OSS
+Setup for the CRANIX and CEPHALIX server
 
 
 %prep
@@ -50,6 +50,6 @@ rake install DESTDIR=%{buildroot}
 %defattr(-,root,root)
 %doc README.md
 /usr/share/YaST2/clients/
-/usr/share/YaST2/lib/oss-setup/
-/usr/share/YaST2/scrconf/etc_schoolserver.scr
+/usr/share/YaST2/lib/cranix-setup/
+/usr/share/YaST2/scrconf/etc_cranix.scr
 /usr/share/YaST2/scrconf/etc_dhcpd.scr

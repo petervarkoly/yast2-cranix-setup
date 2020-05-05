@@ -1,0 +1,8 @@
+#
+
+.etc.cranix
+
+`ag_ini(
+  `SysConfigFile("/etc/sysconfig/cranix")
+)
+
