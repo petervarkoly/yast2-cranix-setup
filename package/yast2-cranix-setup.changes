@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
-Tue Jan 21 12:57:02 UTC 2020 - Peter Varkoly <pvarkoly@cephalix.eu>
+Wed Jan 22 13:42:36 UTC 2020 - Peter Varkoly <pvarkoly@cephalix.eu>
 
--  535faaaae40ee23984d0a9fde994884472d24016 (HEAD -> master, origin/master)
+- de7540564924d97779c08ec85ff7fb0dacfbe933 
    o src/lib/oss-setup/main_dialog.rb
      Force network configuration even if no network connection does exist.
 

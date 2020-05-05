@@ -21,7 +21,7 @@ Release:	0
 License:	MIT
 Summary:	Setup for CRANIX/CEPHALIX
 Url:		www.cephalix.eu
-Vendor:		Dipl. Ing. Peter Varkoly
+Vendor:		%_cranix_vendor
 Group:		System/YaST2
 Source:		%{name}-%{version}.tar.bz2
 BuildRequires:	yast2 yast2-ruby-bindings yast2-devtools
@@ -33,6 +33,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 %description
 Setup for the CRANIX and CEPHALIX server
 
+%_oss_author
 
 %prep
 %setup -q
