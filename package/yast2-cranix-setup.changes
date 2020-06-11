@@ -1,13 +1,19 @@
 -------------------------------------------------------------------
+Thu Jun 11 10:44:42 UTC 2020 - Peter Varkoly <pvarkoly@cephalix.eu>
+
+-  81920a93ae6eb1fec4a941a120e3a17178974e50
+   o Reorganize inst_cranix to cranix_role_finish
+
+-------------------------------------------------------------------
 Tue May  5 17:27:44 UTC 2020 - Peter Varkoly <pvarkoly@cephalix.eu>
 
 - dbc94f2da1c3a8f955a05eb53752da39eb53724a
-  o Move to cranix 
+  o Move to cranix
 
 -------------------------------------------------------------------
 Wed Jan 22 13:42:36 UTC 2020 - Peter Varkoly <pvarkoly@cephalix.eu>
 
-- de7540564924d97779c08ec85ff7fb0dacfbe933 
+- de7540564924d97779c08ec85ff7fb0dacfbe933
    o src/lib/oss-setup/main_dialog.rb
      Force network configuration even if no network connection does exist.
 
@@ -15,7 +21,7 @@ Wed Jan 22 13:42:36 UTC 2020 - Peter Varkoly <pvarkoly@cephalix.eu>
 Thu Sep 19 17:30:24 UTC 2019 - Peter Varkoly <peter@varkoly.de>
 
 - eb49ca2b7de5f7ae6d5139a547a42e376118b46d
-  o Reboot after first configuration 
+  o Reboot after first configuration
 
 -------------------------------------------------------------------
 Wed Sep 18 11:34:43 UTC 2019 - Peter Varkoly <peter@varkoly.de>
@@ -27,14 +33,14 @@ Wed Sep 18 11:34:43 UTC 2019 - Peter Varkoly <peter@varkoly.de>
 -------------------------------------------------------------------
 Tue Jul 16 20:19:37 UTC 2019 - Peter Varkoly <peter@varkoly.de>
 
-- 9fbfda4e08ef439a9cbe7e669240cb670166947a 
+- 9fbfda4e08ef439a9cbe7e669240cb670166947a
  o dialogs.rb
    oss-web must be installed after set up the server
 
 -------------------------------------------------------------------
 Tue Jul 16 10:01:14 UTC 2019 - Peter Varkoly <peter@varkoly.de>
 
-- 363f9c410e3294da97e151b17eb73c400b7ad9c7  
+- 363f9c410e3294da97e151b17eb73c400b7ad9c7
   o dialogs.rb main_dialog.rb
     Do not try to install base packages.
     On cephalix allow only cephalix as institute type.
@@ -84,7 +90,7 @@ Sun Aug 19 06:34:23 UTC 2018 - peter@varkoly.de
 Wed Jul 18 16:46:21 UTC 2018 - peter@varkoly.de
 
 - b40668c1b82f1dbe77ac1be508b99166486e9417
-  Consolidate OSS-UBS-and-CRANIX 
+  Consolidate OSS-UBS-and-CRANIX
 
 -------------------------------------------------------------------
 Thu May  3 15:29:25 UTC 2018 - peter@varkoly.de
@@ -103,7 +109,7 @@ Thu May  3 14:01:49 UTC 2018 - peter@varkoly.de
 Mon Apr  2 07:46:25 UTC 2018 - peter@varkoly.de
 
 - 65a90cfd3eb31484aafc5aa7dd6362d2ce665688
-  o Write SCHOOL_WORKGROUP too. 
+  o Write SCHOOL_WORKGROUP too.
 
 -------------------------------------------------------------------
 Tue Mar  6 15:59:45 UTC 2018 - peter@varkoly.de
@@ -115,13 +121,13 @@ Tue Mar  6 15:59:45 UTC 2018 - peter@varkoly.de
 Thu Mar  1 13:19:23 UTC 2018 - peter@varkoly.de
 
 - 3052519863da0006a93c94bf9ef79c9c6c836ee6
-  o ANON_DHCP_RANGE was corrupt if netmask is 22 23 or 2 
+  o ANON_DHCP_RANGE was corrupt if netmask is 22 23 or 2
   o use the right agent for dhcpd
 
 -------------------------------------------------------------------
 Tue Feb 20 22:54:27 UTC 2018 - peter@varkoly.de
 
-- Make school types translatable. 
+- Make school types translatable.
 
 -------------------------------------------------------------------
 Sat Feb 17 10:22:08 UTC 2018 - peter@varkoly.de
@@ -139,7 +145,7 @@ Sat Feb 17 09:24:31 UTC 2018 - peter@varkoly.de
 Fri Feb 16 19:05:30 UTC 2018 - peter@varkoly.de
 
 - c3e5731d508aaea6dd27ba2375c94c6607830d13
-  o ubs uses oss-api 
+  o ubs uses oss-api
 
 -------------------------------------------------------------------
 Thu Feb 15 14:49:32 UTC 2018 - peter@varkoly.de
@@ -147,13 +153,13 @@ Thu Feb 15 14:49:32 UTC 2018 - peter@varkoly.de
 - 53f516703c6b7232018855b5e24bee2b7dc2814a
   o main_dialog.rb, dialogs.rb
     Code clean up.
-    Install different packages for schoolserver cephalix and business server. 
+    Install different packages for schoolserver cephalix and business server.
 
 -------------------------------------------------------------------
 Sat Feb 10 11:58:42 UTC 2018 - peter@varkoly.de
 
 - feaa29051045b6a26996f89c862a7e792cf09505
-    Add missed dhcpd src definition 
+    Add missed dhcpd src definition
 
 -------------------------------------------------------------------
 Tue Feb  6 16:16:45 UTC 2018 - peter@varkoly.de
@@ -177,26 +183,26 @@ Sun Dec 10 19:24:14 UTC 2017 - peter@varkoly.de
 Thu Dec  7 12:39:15 UTC 2017 - peter@varkoly.de
 
 -  57501de5e98d36395acbe0268a601aa5c3e26fe0
-    Activate sshd and oss-api 
+    Activate sshd and oss-api
 
 -------------------------------------------------------------------
 Mon Dec  4 15:14:51 UTC 2017 - peter@varkoly.de
 
 - c7418e2fb01654c2fcef85a83bd7eabe50092ccb
     Install oss-proxy.
-    Do not use school. 
+    Do not use school.
     Enable squid
 
 -------------------------------------------------------------------
 Sat Sep 23 13:38:54 UTC 2017 - peter@varkoly.de
 
 - 470cd408202d7910a82073b9355756d8e243506c
-    Install oss-clone and enable xinetd and vsftpd services. 
+    Install oss-clone and enable xinetd and vsftpd services.
 
 -------------------------------------------------------------------
 Wed Sep 20 13:51:38 UTC 2017 - peter@varkoly.de
 
--  780416c574318ca604f4c0bc81768fc700d521d2 
+-  780416c574318ca604f4c0bc81768fc700d521d2
    Make server name confiugrable.
     Using admin as netbiosname makes a lot of truble.
 
@@ -217,13 +223,13 @@ Sun Jul  9 10:33:29 UTC 2017 - peter@varkoly.de
 Sun Jul  2 12:18:59 UTC 2017 - peter@varkoly.de
 
 - 54433be7f8625d7464da4fe89c24949f1fbcd4f3
-  o The 'Maximal number of IP-Addesses in a Room' is unimportant. 
+  o The 'Maximal number of IP-Addesses in a Room' is unimportant.
 
 -------------------------------------------------------------------
 Mon May 29 06:41:30 UTC 2017 - peter@varkoly.de
 
 - 6b95572fc86d0f3be6a5b231aa88776bdad94942
-  o Overwrite /etc/sysconfig/schoolserver everytime. 
+  o Overwrite /etc/sysconfig/schoolserver everytime.
 
 -------------------------------------------------------------------
 Tue Mar 28 15:58:58 UTC 2017 - peter@varkoly.de
@@ -235,13 +241,13 @@ Tue Mar 28 15:58:58 UTC 2017 - peter@varkoly.de
 -------------------------------------------------------------------
 Sat Mar 11 15:47:42 UTC 2017 - peter@varkoly.de
 
-- Use admin as name instaead of schooladmin. 
+- Use admin as name instaead of schooladmin.
   o dialogs.rb
 
 -------------------------------------------------------------------
 Thu Feb 23 15:35:40 UTC 2017 - peter@varkoly.de
 
-- Start the postsetup script too. 
+- Start the postsetup script too.
 
 -------------------------------------------------------------------
 Sat Jan 28 06:56:09 UTC 2017 - peter@varkoly.de
@@ -253,17 +259,17 @@ Sat Jan 28 06:56:09 UTC 2017 - peter@varkoly.de
 -------------------------------------------------------------------
 Wed Jan 25 10:46:29 UTC 2017 - peter@varkoly.de
 
-- Setup dhcp too. 
+- Setup dhcp too.
 
 -------------------------------------------------------------------
 Wed Jan 25 14:28:31 UTC 2017 - peter@varkoly.de
 
-- return next instead of null 
+- return next instead of null
 
 -------------------------------------------------------------------
 Wed Jan 25 10:46:29 UTC 2017 - peter@varkoly.de
 
-- Setup dhcp too. 
+- Setup dhcp too.
 
 -------------------------------------------------------------------
 Tue Jan 24 19:41:26 UTC 2017 - peter@varkoly.de
@@ -279,5 +285,5 @@ Tue Jan 24 19:41:26 UTC 2017 - peter@varkoly.de
 -------------------------------------------------------------------
 Mon Nov 14 17:44:42 UTC 2016 - peter@varkoly.de
 
-- Initial version of the OSS 4.0 setup 
+- Initial version of the OSS 4.0 setup
 
