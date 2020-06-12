@@ -52,5 +52,7 @@ rake install DESTDIR=%{buildroot}
 %doc README.md
 /usr/share/YaST2/clients/
 /usr/share/YaST2/lib/cranix-setup/
+%dir /usr/share/YaST2/lib/y2system_role_handlers/
+/usr/share/YaST2/lib/y2system_role_handlers/*
 /usr/share/YaST2/scrconf/etc_cranix.scr
 /usr/share/YaST2/scrconf/etc_dhcpd.scr
