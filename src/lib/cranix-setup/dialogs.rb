@@ -7,24 +7,24 @@
 require 'yast'
 require 'ui/dialog'
 require "open3"
+require "cfa/sysctl"
 
-
-Yast.import 'UI'
-Yast.import 'Icon'
-Yast.import 'Label'
-Yast.import 'Popup'
-Yast.import 'Netmask'
-Yast.import 'IP'
-Yast.import "OSRelease"
-
-module CRANIX
-    class Dialogs
+module Yast
+    class CranixDialogs < Module
         include Yast
         include UIShortcuts
         include I18n
         include Logger
 
         def initialize
+            Yast.include self, "network/routines.rb"
+            Yast.import 'UI'
+            Yast.import 'Icon'
+            Yast.import 'Label'
+            Yast.import 'Popup'
+            Yast.import 'Netmask'
+            Yast.import 'IP'
+            Yast.import "OSRelease"
             textdomain 'cranix'
             true
         end
@@ -53,7 +53,7 @@ module CRANIX
               break
             end
           end
-          backup 
+          backup
         end
 
         #Card Dialog
@@ -62,15 +62,14 @@ module CRANIX
             cards = read_net_cards("")
             # Dialog help
             help = _("Select the Network Card for the CRANIX and enter the IP-Address of the Default Gateway.") +
-                   _("If yo can not identify the cards push or remove network cabel from a device.") + 
+                   _("If yo can not identify the cards push or remove network cabel from a device.") +
                    _("After them you can push 'Reload Network Cards' and you can see the changes if the device is connected.")
             is_gate = SCR.Read(path(".etc.cranix.CRANIX_ISGATE")) == "yes" ? true : false
             if is_gate
                help = _("Select the Network Cards for CRANIX.")
-                      _("If yo can not identify the cards push or remove network cabel from a device.") + 
+                      _("If yo can not identify the cards push or remove network cabel from a device.") +
                       _("After them you can push 'Reload Network Cards' and you can see the changes if the device is connected.")
             end
-            
             # Dialog contents
             contents = HBox(
               HSpacing(8),
@@ -103,7 +102,6 @@ module CRANIX
                   HSpacing(8)
                 )
             end
-            
             # Dialog
             Wizard.SetContentsButtons(
               _("Network Card Selection"),
@@ -117,7 +115,6 @@ module CRANIX
             else
                UI.SetFocus(Id(:def_gw))
             end
-            
             ret = nil
             while true
               ret = UI.UserInput
@@ -138,12 +135,12 @@ module CRANIX
                     UI.ReplaceWidget(Id(:rep_net1),SelectionBox(Id(:intdev), _("A&vailable Network Cards:"), cards ))
                  end
               when :next
-                     ip = SCR.Read(path(".etc.cranix.CRANIX_SERVER")) 
-                   mail = SCR.Read(path(".etc.cranix.CRANIX_MAILSERVER")) 
-                   prox = SCR.Read(path(".etc.cranix.CRANIX_PROXY")) 
-                   prin = SCR.Read(path(".etc.cranix.CRANIX_PRINTSERVER")) 
-                 backup = SCR.Read(path(".etc.cranix.CRANIX_BACKUP_SERVER")) 
-                     nm = SCR.Read(path(".etc.cranix.CRANIX_NETMASK")) 
+                     ip = SCR.Read(path(".etc.cranix.CRANIX_SERVER"))
+                   mail = SCR.Read(path(".etc.cranix.CRANIX_MAILSERVER"))
+                   prox = SCR.Read(path(".etc.cranix.CRANIX_PROXY"))
+                   prin = SCR.Read(path(".etc.cranix.CRANIX_PRINTSERVER"))
+                 backup = SCR.Read(path(".etc.cranix.CRANIX_BACKUP_SERVER"))
+                     nm = SCR.Read(path(".etc.cranix.CRANIX_NETMASK"))
                  intdev = Yast::UI.QueryWidget(Id(:intdev), :CurrentItem)
                  def_gw = Yast::UI.QueryWidget(Id(:def_gw), :Value)
                  extdev = nil
@@ -192,48 +189,31 @@ module CRANIX
                  end #end if is_gate
                  SCR.Write(path(".etc.cranix"),nil)
                  #Now let's start configuring network
-                 Routing.Forward_v4 = false
-                 Routing.Forward_v6 = false
-                 Routing.Routes = [
-                   {
-                     "destination" => "default",
-                     "gateway"     => def_gw,
-                     "netmask"     => "-",
-                     "device"      => "-"
-                   }
-                 ]
-                 #Configure internal interface
-                 if NetworkInterfaces.Check(intdev)
-                     NetworkInterfaces.Edit(intdev)
-                 else
-                     NetworkInterfaces.Add
-                     NetworkInterfaces.Name = intdev
-                 end
-                 NetworkInterfaces.Current = {
-                     "BOOTPROTO" => "static",
-                     "NAME"      => intdev,
-                     "STARTMODE" => "onboot",
-                     "IPADDR"    => ip,
-                     "NETMASK"   => Netmask.FromBits(Builtins.tointeger(nm)),
-                     "_aliases"  => {
-                         "mail"  => {
-                             "IPADDR"  => mail,
-                             "NETMASK" => Netmask.FromBits(Builtins.tointeger(nm)),
-                             "LABEL"   => "mail"
-                         },
-                         "print" => {
-                             "IPADDR"  => prin,
-                             "NETMASK" => Netmask.FromBits(Builtins.tointeger(nm)),
-                             "LABEL"   => "prin"
-                         },
-                             "proxy" => {
-                             "IPADDR"  => prox,
-                             "NETMASK" => Netmask.FromBits(Builtins.tointeger(nm)),
-                             "LABEL"   => "prox"
-                         }
-                     }
-                 }
-                 NetworkInterfaces.Commit
+		 sysctl = CFA::Sysctl.new
+		 sysctl.load
+                 sysctl.forward_ipv4 = '1'
+		 sysctl.raw_forward_ipv6 = '1'
+                 sysctl.save
+
+		 SCR.Read(path(".etc.sysctl_conf"))
+		 SCR.Write(path(".etc.sysctl_conf.net.ipv4.ip_forward"),1)
+		 SCR.Write(path(".etc.sysctl_conf.net.ipv6.conf.all.forwarding"),1)
+		 SCR.Write(path(".etc.sysctl_conf"),nil)
+
+		 File.write("/etc/sysconfig/network/routes","default " + def_gw + " - -")
+		 intdevConf = "BOOTPROTO='static'
+IPADDR='" + ip + "/" + nm +"'
+PREFIXLEN='" + nm +"'
+STARTMODE='auto'
+IPADDR_mail='" + mail + "/" + nm +"'
+LABEL_mail='mail'
+IPADDR_print='" + prin + "/" + nm +"'
+LABEL_print='print'
+IPADDR_proxy='" + prox + "/" + nm +"'
+LABEL_proxy='proxy'
+"
+		 File.write("/etc/sysconfig/network/ifcfg-" + intdev,intdevConf)
+
                  # We write the internal device every time as internal device.
                  if is_gate
                      SCR.Write(path(".sysconfig.SuSEfirewall2.FW_ROUTE"), "yes")
@@ -244,61 +224,20 @@ module CRANIX
                  SCR.Write(path(".etc.dhcpd.DHCPD_INTERFACE"), intdev)
                  SCR.Write(path(".etc.dhcpd"), nil)
                  domain = SCR.Read(path(".etc.cranix.CRANIX_DOMAIN"))
-                 dns_tmp = DNS.Export
-                 serverName = SCR.Read(path(".etc.cranix.CRANIX_NETBIOSNAME")) 
-                 Ops.set(dns_tmp, "hostname",    serverName )
-                 Ops.set(dns_tmp, "domain",      domain )
-                 Ops.set(dns_tmp, "nameservers", [ "127.0.0.1" ] )
-                 Ops.set(dns_tmp, "searchlist",  [domain] )
-                 DNS.Import(dns_tmp)
-                 DNS.modified = true
+		 SCR.Read(path(".sysconfig.network.config"))
+		 SCR.Write(path(".sysconfig.network.config.NETCONFIG_DNS_STATIC_SEARCHLIST"),domain)
+		 SCR.Write(path(".sysconfig.network.config.NETCONFIG_DNS_STATIC_SERVERS"),"127.0.0.1")
+		 SCR.Write(path(".sysconfig.network.config"),nil)
+		 SCR.Execute(path(".target.bash"),"netconfig update -f")
+		 serverName = SCR.Read(path(".etc.cranix.CRANIX_NETBIOSNAME"))
 
-# It is buggy
-#                host_tmp = Host.Export
-#                if is_gate
-#                  Ops.set(host_tmp, "hosts", {
-#                                       ip     => [ serverName + "." + domain + " " + serverName],
-#                                       mail   => ["mailserver."  + domain + " mailserver" ],
-#                                       prin   => ["printserver." + domain + " printserver" ],
-#                                       prox   => ["proxy."       + domain + " proxy" ],
-#                                       backup => ["backup."      + domain + " backup" ],
-#                                       ext_ip => ["extip"],
-#                                        216.239.32.20  => [ "www.google.de","www.google.com","www.google.fr","www.google.it","www.google.hu","www.google.en" ]
-#                                  })
-#                else
-#                  Ops.set(host_tmp, "hosts", {
-#                                       ip     => [ serverName + "." + domain + " " + serverName],
-#                                       mail   => ["mailserver."  + domain + " mailserver" ],
-#                                       prin   => ["printserver." + domain + " printserver" ],
-#                                       prox   => ["proxy."       + domain + " proxy" ],
-#                                       backup => ["backup."      + domain + " backup" ],
-#                                        216.239.32.20  => [ "www.google.de","www.google.com","www.google.fr","www.google.it","www.google.hu","www.google.en" ]
-#                                  })
-#                Host.Import(host_tmp)
-#                 fw_int_dev = Y2Firewall::Firewalld::Interface.new(intdev)
-#                 fw_int_dev.zone="trusted"
                  if is_gate
-                    #Configure external interface
-#                   fw_ext_dev = Y2Firewall::Firewalld::Interface.new(extdev)
-#                   fw_ext_dev.zone="external"
-                    if NetworkInterfaces.Check(extdev)
-                      NetworkInterfaces.Edit(extdev)
-                    else
-                      Lan.Add
-                      NetworkInterfaces.Add
-                      NetworkInterfaces.Name = extdev
-                    end
-                    NetworkInterfaces.Current = {
-                      "BOOTPROTO" => "static",
-                      "NAME"      => extdev,
-                      "STARTMODE" => "onboot",
-                      "IPADDR"    => ext_ip,
-                      "NETMASK"   => Netmask.FromBits(Builtins.tointeger(ext_nm))
-                    }
-                    NetworkInterfaces.Commit
+		    extdevConf = "BOOTPROTO='static'
+IPADDR='"+ ext_ip + "/" + ext_nm + "'
+PREFIXLEN='" +  ext_nm + " '
+STARTMODE='auto'"
+		    File.write("/etc/sysconfig/network/ifcfg-" + extdev,extdevConf)
                  end #end if is_gate
-                 LanItems.SetModified
-                 Lan.Write
 #
 #
 host_tmp = "#
@@ -313,7 +252,7 @@ host_tmp = "#
 #
 
 127.0.0.1       localhost
-"+ ip     + "   "+ serverName + "." + domain + " " + serverName + " 
+"+ ip     + "   "+ serverName + "." + domain + " " + serverName + "
 "+ mail   + "   mailserver."  + domain + " mailserver
 "+ prin   + "   printserver." + domain + " printserver
 "+ prox   + "   proxy."       + domain + " proxy
@@ -326,11 +265,11 @@ host_tmp = "#
 "
                  end
                  File.write("/etc/hosts",host_tmp)
+		 Service.Restart("network")
                  ret = :write
                  break
               end #end when :next
             end
-            
             return ret
         end
 
@@ -435,7 +374,6 @@ host_tmp = "#
                 ),
               HSpacing(8)
             )
-            
             # Dialog
             Wizard.SetContentsButtons(
               caption,
@@ -458,7 +396,7 @@ host_tmp = "#
             UI.ChangeWidget(Id(:expert_print), :Enabled, false)
             UI.ChangeWidget(Id(:expert_backup), :Enabled, false)
             UI.ChangeWidget(Id(:expert_first), :Enabled, false)
- 
+
             ret = nil
             while true
               ret = UI.UserInput
@@ -570,7 +508,7 @@ host_tmp = "#
                     UI.SetFocus(Id(:domain))
                     next
                  end
-                 if domain.match('\.local$') 
+                 if domain.match('\.local$')
                     msg = Builtins.sformat(_("'%1' is an invalid Domain Name. Use something like cranix.eu."), domain)
                     Popup.Error(msg)
                     UI.SetFocus(Id(:domain))
@@ -741,20 +679,13 @@ host_tmp = "#
         :privat
         def read_net_cards(device)
             Builtins.y2milestone("-- CRANIX-Setup read_net_cards Called --")
-            LanItems.Read()
+	    Builtins.y2milestone("ReadHardware %1", ReadHardware("netcard"))
             cards = []
-            Builtins.foreach(
-              Convert.convert(
-                Map.Keys(LanItems.Items),
-                :from => "list",
-                :to   => "list <integer>"
-              )
-            ) do |key|
-              name  = Ops.get_string(LanItems.Items, [key, "hwinfo", "name"], "")
-              dev   = Ops.get_string(LanItems.Items, [key, "hwinfo", "dev_name"], "")
-              mac   = Ops.get_string(LanItems.Items, [key, "hwinfo", "mac"], "")
-              link  = Ops.get_boolean(LanItems.Items, [key, "hwinfo", "link"], false ) ? _("Connected") : _("Not Connected")
-
+	    ReadHardware("netcard").each do |netcard|
+              name  = netcard.fetch("name", "")
+              dev   = netcard.fetch("dev_name", "")
+              mac   = netcard.fetch("mac", "")
+              link  = netcard.fetch("link", false ) ? _("Connected") : _("Not Connected")
               next if dev == device
               name  = dev + " : " + mac + " : " + name + " : " + link
               cards << Item(Id(dev), name)
@@ -852,6 +783,5 @@ host_tmp = "#
         end
 
     end
-
-    DialogsInst = Dialogs.new
+    DialogsInst = CranixDialogs.new
 end

@@ -4,27 +4,24 @@
 #
 # Author: Peter Varkoly <peter@varkoly.de>
 
-require 'yast'
-require 'ui/dialog'
 require 'cranix-setup/dialogs'
 
-Yast.import 'Icon'
-Yast.import 'Label'
-Yast.import 'Lan'
-Yast.import 'Popup'
-Yast.import 'Package'
-Yast.import 'Service'
-Yast.import 'UI'
-Yast.import 'Wizard'
-
-module CRANIX
-    class MainDialog
+module Yast
+    class MainDialog < Client
         include Yast
         include UIShortcuts
         include I18n
         include Logger
 
         def initialize
+            Yast.import 'Icon'
+            Yast.import 'Label'
+            Yast.import 'Lan'
+            Yast.import 'Popup'
+            Yast.import 'Package'
+            Yast.import 'Service'
+            Yast.import 'UI'
+            Yast.import 'Wizard'
             textdomain 'cranix'
             Builtins.y2milestone("initialize CRANIX started")
             @readBackup = false
@@ -42,8 +39,8 @@ module CRANIX
             loop do
                 case ret
                 when :start
-                     if DialogsInst.ReadBackupDialog()
-                         @readBackup = true 
+			if DialogsInst.ReadBackupDialog()
+                         @readBackup = true
                          SCR.Read(path(".etc.cranix"))
                          ret = :network
                      else
@@ -58,14 +55,14 @@ module CRANIX
                         ret = :basic
                      end
                 when :basic
-                     ret = DialogsInst.BasicSetting()
+			ret = DialogsInst.BasicSetting()
                 when :expert
-                     ret = DialogsInst.ExpertSetting()
+			ret = DialogsInst.ExpertSetting()
                 when :network
-                     ret = DialogsInst.CardDialog()
+			ret = DialogsInst.CardDialog()
                 when :write
                      SCR.Execute(path(".target.bash"), "/usr/share/cranix/tools/register.sh")
-                     ret = DialogsInst.CranixSetup()
+		     ret = DialogsInst.CranixSetup()
                      Package.DoInstall(["cranix-clone","cranix-proxy","cranix-web"])
 		     Package.DoRemove(["firewalld","yast2-firewall","firewalld-lang"])
                      Service.Enable("xinetd")
@@ -81,7 +78,6 @@ module CRANIX
 	    SCR.Execute(path(".target.bash"), "rm -rf /var/lib/YaST2/reconfig_system")
             return :next
         end
-        
         def event_loop
         end
     end
