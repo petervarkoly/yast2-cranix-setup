@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Aug 19 14:21:20 UTC 2020 - Peter Varkoly <pvarkoly@cephalix.eu>
+
+- 54152ae2eddd08e60990eac6eb4e18b483d1810c
+  o Take care to set to FQHN
+  o Replace tabs with spaces
+- 4.3.1
+
+-------------------------------------------------------------------
 Tue Aug 18 15:26:19 UTC 2020 - Peter Varkoly <pvarkoly@cephalix.eu>
 
 - 9e5df86b4f08dfc26fe94da578742a081dd5230c
