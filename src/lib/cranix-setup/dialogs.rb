@@ -189,19 +189,19 @@ module Yast
                  end #end if is_gate
                  SCR.Write(path(".etc.cranix"),nil)
                  #Now let's start configuring network
-		 sysctl = CFA::Sysctl.new
-		 sysctl.load
+                 sysctl = CFA::Sysctl.new
+                 sysctl.load
                  sysctl.forward_ipv4 = '1'
-		 sysctl.raw_forward_ipv6 = '1'
+                 sysctl.raw_forward_ipv6 = '1'
                  sysctl.save
 
-		 SCR.Read(path(".etc.sysctl_conf"))
-		 SCR.Write(path(".etc.sysctl_conf.net.ipv4.ip_forward"),1)
-		 SCR.Write(path(".etc.sysctl_conf.net.ipv6.conf.all.forwarding"),1)
-		 SCR.Write(path(".etc.sysctl_conf"),nil)
+                 SCR.Read(path(".etc.sysctl_conf"))
+                 SCR.Write(path(".etc.sysctl_conf.net.ipv4.ip_forward"),1)
+                 SCR.Write(path(".etc.sysctl_conf.net.ipv6.conf.all.forwarding"),1)
+                 SCR.Write(path(".etc.sysctl_conf"),nil)
 
-		 File.write("/etc/sysconfig/network/routes","default " + def_gw + " - -")
-		 intdevConf = "BOOTPROTO='static'
+                 File.write("/etc/sysconfig/network/routes","default " + def_gw + " - -")
+                 intdevConf = "BOOTPROTO='static'
 IPADDR='" + ip + "/" + nm +"'
 PREFIXLEN='" + nm +"'
 STARTMODE='auto'
@@ -212,7 +212,7 @@ LABEL_print='print'
 IPADDR_proxy='" + prox + "/" + nm +"'
 LABEL_proxy='proxy'
 "
-		 File.write("/etc/sysconfig/network/ifcfg-" + intdev,intdevConf)
+                 File.write("/etc/sysconfig/network/ifcfg-" + intdev,intdevConf)
 
                  # We write the internal device every time as internal device.
                  if is_gate
@@ -224,22 +224,20 @@ LABEL_proxy='proxy'
                  SCR.Write(path(".etc.dhcpd.DHCPD_INTERFACE"), intdev)
                  SCR.Write(path(".etc.dhcpd"), nil)
                  domain = SCR.Read(path(".etc.cranix.CRANIX_DOMAIN"))
-		 SCR.Read(path(".sysconfig.network.config"))
-		 SCR.Write(path(".sysconfig.network.config.NETCONFIG_DNS_STATIC_SEARCHLIST"),domain)
-		 SCR.Write(path(".sysconfig.network.config.NETCONFIG_DNS_STATIC_SERVERS"),"127.0.0.1")
-		 SCR.Write(path(".sysconfig.network.config"),nil)
-		 SCR.Execute(path(".target.bash"),"netconfig update -f")
-		 serverName = SCR.Read(path(".etc.cranix.CRANIX_NETBIOSNAME"))
+                 SCR.Read(path(".sysconfig.network.config"))
+                 SCR.Write(path(".sysconfig.network.config.NETCONFIG_DNS_STATIC_SEARCHLIST"),domain)
+                 SCR.Write(path(".sysconfig.network.config.NETCONFIG_DNS_STATIC_SERVERS"),"127.0.0.1")
+                 SCR.Write(path(".sysconfig.network.config"),nil)
+                 SCR.Execute(path(".target.bash"),"netconfig update -f")
+                 serverName = SCR.Read(path(".etc.cranix.CRANIX_NETBIOSNAME"))
 
                  if is_gate
-		    extdevConf = "BOOTPROTO='static'
-IPADDR='"+ ext_ip + "/" + ext_nm + "'
-PREFIXLEN='" +  ext_nm + " '
+                    extdevConf = "BOOTPROTO='static'
+IPADDR='"+ ext_ip + "/" + ext_nm.to_s + "'
+PREFIXLEN='" +  ext_nm.to_s + " '
 STARTMODE='auto'"
-		    File.write("/etc/sysconfig/network/ifcfg-" + extdev,extdevConf)
+                    File.write("/etc/sysconfig/network/ifcfg-" + extdev,extdevConf)
                  end #end if is_gate
-#
-#
 host_tmp = "#
 # hosts         This file describes a number of hostname-to-address
 #               mappings for the TCP/IP subsystem.  It is mostly
@@ -265,7 +263,9 @@ host_tmp = "#
 "
                  end
                  File.write("/etc/hosts",host_tmp)
-		 Service.Restart("network")
+                 File.write("/etc/hostname",serverName + "." + domain)
+                 SCR.Execute(path(".target.bash"),"hostname "+ serverName)
+                 Service.Restart("network")
                  ret = :write
                  break
               end #end when :next
@@ -503,7 +503,7 @@ host_tmp = "#
                  end
                  domain = Convert.to_string(UI.QueryWidget(Id(:domain),:Value))
                  if domain.split(".").size < 2
-		    msg = Builtins.sformat(_("'%1' is an invalid Domain Name. Use something like cranix.eu."), domain)
+                    msg = Builtins.sformat(_("'%1' is an invalid Domain Name. Use something like cranix.eu."), domain)
                     Popup.Error(msg)
                     UI.SetFocus(Id(:domain))
                     next
@@ -679,9 +679,9 @@ host_tmp = "#
         :privat
         def read_net_cards(device)
             Builtins.y2milestone("-- CRANIX-Setup read_net_cards Called --")
-	    Builtins.y2milestone("ReadHardware %1", ReadHardware("netcard"))
+            Builtins.y2milestone("ReadHardware %1", ReadHardware("netcard"))
             cards = []
-	    ReadHardware("netcard").each do |netcard|
+            ReadHardware("netcard").each do |netcard|
               name  = netcard.fetch("name", "")
               dev   = netcard.fetch("dev_name", "")
               mac   = netcard.fetch("mac", "")

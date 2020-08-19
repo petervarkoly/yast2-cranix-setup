@@ -4,8 +4,5 @@
 
 
 require "cranix-setup/main_dialog"
-
-include CRANIX
-
-MainDialog.new.run
+Yast::MainDialog.new.run
 

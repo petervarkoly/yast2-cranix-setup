@@ -26,9 +26,9 @@ module Yast
             Builtins.y2milestone("initialize CRANIX started")
             @readBackup = false
             Wizard.OpenNextBackStepsDialog()
-	    SCR.Read(path(".sysconfig.network.config"))
-	    SCR.Write(path(".sysconfig.network.config.LINK_REQUIRED"),"no")
-	    SCR.Write(path(".sysconfig.network.config"),nil)
+            SCR.Read(path(".sysconfig.network.config"))
+            SCR.Write(path(".sysconfig.network.config.LINK_REQUIRED"),"no")
+            SCR.Write(path(".sysconfig.network.config"),nil)
             Lan.Read(:nocache)
             Builtins.y2milestone("initialize CRANIX finished")
         end
@@ -39,7 +39,7 @@ module Yast
             loop do
                 case ret
                 when :start
-			if DialogsInst.ReadBackupDialog()
+                        if DialogsInst.ReadBackupDialog()
                          @readBackup = true
                          SCR.Read(path(".etc.cranix"))
                          ret = :network
@@ -55,16 +55,16 @@ module Yast
                         ret = :basic
                      end
                 when :basic
-			ret = DialogsInst.BasicSetting()
+                        ret = DialogsInst.BasicSetting()
                 when :expert
-			ret = DialogsInst.ExpertSetting()
+                        ret = DialogsInst.ExpertSetting()
                 when :network
-			ret = DialogsInst.CardDialog()
+                        ret = DialogsInst.CardDialog()
                 when :write
                      SCR.Execute(path(".target.bash"), "/usr/share/cranix/tools/register.sh")
-		     ret = DialogsInst.CranixSetup()
+                     ret = DialogsInst.CranixSetup()
                      Package.DoInstall(["cranix-clone","cranix-proxy","cranix-web"])
-		     Package.DoRemove(["firewalld","yast2-firewall","firewalld-lang"])
+                     Package.DoRemove(["firewalld","yast2-firewall","firewalld-lang"])
                      Service.Enable("xinetd")
                      Service.Enable("vsftpd")
                      Service.Enable("squid")
@@ -75,7 +75,7 @@ module Yast
                      break
                 end
             end
-	    SCR.Execute(path(".target.bash"), "rm -rf /var/lib/YaST2/reconfig_system")
+            SCR.Execute(path(".target.bash"), "rm -rf /var/lib/YaST2/reconfig_system")
             return :next
         end
         def event_loop
