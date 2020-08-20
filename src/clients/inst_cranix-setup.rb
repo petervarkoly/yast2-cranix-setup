@@ -9,6 +9,7 @@ module Yast
         SCR.Write(path(".sysconfig.firstboot.FIRSTBOOT_CONTROL_FILE"),  "/etc/YaST2/cranix-firstboot.xml")
         SCR.Write(path(".sysconfig.firstboot.LICENSE_REFUSAL_ACTION"),  "continue")
         SCR.Write(path(".sysconfig.firstboot.FIRSTBOOT_FINISH_ACTION"), "reboot")
+        SCR.Write(path(".sysconfig.firstboot.FIRSTBOOT_FINISH_FILE"), "/usr/share/cranix/setup/cranix-wellcome.rtf")
         SCR.Write(path(".sysconfig.firstboot"), nil)
         :next
     end
