@@ -1,7 +1,8 @@
 -------------------------------------------------------------------
-Wed Aug 19 14:21:20 UTC 2020 - Peter Varkoly <pvarkoly@cephalix.eu>
+Wed Aug 20 06:55:20 UTC 2020 - Peter Varkoly <pvarkoly@cephalix.eu>
 
-- 54152ae2eddd08e60990eac6eb4e18b483d1810c
+- 8ac54ea7ddc9f9adb47d4829ae33bc3faad156b6
+  o Show customized file when finisching
   o Take care to set to FQHN
   o Replace tabs with spaces
 - 4.3.1
