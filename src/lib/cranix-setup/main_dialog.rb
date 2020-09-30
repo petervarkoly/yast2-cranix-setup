@@ -63,7 +63,7 @@ module Yast
                 when :write
                      SCR.Execute(path(".target.bash"), "/usr/share/cranix/tools/register.sh")
                      ret = DialogsInst.CranixSetup()
-                     Package.DoInstall(["cranix-clone","cranix-proxy","cranix-web"])
+                     Package.DoInstall(["cranix-clone","cranix-web"])
                      Package.DoRemove(["firewalld","yast2-firewall","firewalld-lang"])
                      Service.Enable("xinetd")
                      Service.Enable("vsftpd")

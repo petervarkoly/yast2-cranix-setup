@@ -758,7 +758,7 @@ host_tmp = "#
                   ) != {}
                   Builtins.y2milestone("found")
                   ok = true
-                  SCR.Execute( path(".target.bash"), Ops.add( Ops.add("mkdir -p /var/adm/cranix/; cp ", mountpoint), "/cranix /var/adm/cranix/old-cranix" ) )
+                  SCR.Execute( path(".target.bash"), "cp " + mountpoint + "/cranix /etc/sysconfig/cranix")
                   break
                 else
                   WFM.Execute(path(".local.umount"), mountpoint)

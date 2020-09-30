@@ -4,6 +4,7 @@
 Yast.import 'Popup'
 module Yast
   class InstCranixCheckUpdate < Client
+    textdomain 'cranix'
     def main
         if !File.exist?("/mnt/home/archive/migrate-to-4-0/SAMBA/passdb.tdb")
                 Popup.Error(_("The update prepare script was not executed succesfully."))
