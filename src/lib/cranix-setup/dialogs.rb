@@ -574,9 +574,9 @@ host_tmp = "#
             Progress.NextStage
             Progress.off
             if SCR.Read(path(".etc.cranix.CRANIX_USE_DHCP")) == "yes"
-               SCR.Execute(path(".target.bash"), "/usr/share/cranix/setup/scripts/crx-setup.sh --passwdf=/tmp/passwd --accounts --dhcp --postsetup" )
+               SCR.Execute(path(".target.bash"), "/usr/share/cranix/setup/scripts/crx-setup.sh --passwdf=/tmp/passwd --accounts --dhcp --postsetup --proxy" )
             else
-               SCR.Execute(path(".target.bash"), "/usr/share/cranix/setup/scripts/crx-setup.sh --passwdf=/tmp/passwd --accounts --postsetup" )
+               SCR.Execute(path(".target.bash"), "/usr/share/cranix/setup/scripts/crx-setup.sh --passwdf=/tmp/passwd --accounts --postsetup --proxy" )
             end
             SCR.Execute(path(".target.bash"), "rm /tmp/passwd")
         end

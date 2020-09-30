@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Wed Sep 30 06:40:59 UTC 2020 - Peter Varkoly <pvarkoly@cephalix.eu>
 
-- 450fa6e541742d7485b0f009e616a1e0399b5387 (HEAD -> master, origin/master)
+- 450fa6e541742d7485b0f009e616a1e0399b5387
   o Do not install cranix-proxy.
   o Copy backup cranix file directly to /etc/sysconfig/cranix
 - 4.3.2 
