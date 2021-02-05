@@ -677,18 +677,29 @@ host_tmp = "#
 
         #Some internal use only functions
         :privat
-        def read_net_cards(device)
+	def read_net_cards(device)
             Builtins.y2milestone("-- CRANIX-Setup read_net_cards Called --")
             Builtins.y2milestone("ReadHardware %1", ReadHardware("netcard"))
             cards = []
+            devs  = []
             ReadHardware("netcard").each do |netcard|
               name  = netcard.fetch("name", "")
               dev   = netcard.fetch("dev_name", "")
+              devs  << dev
               mac   = netcard.fetch("mac", "")
               link  = netcard.fetch("link", false ) ? _("Connected") : _("Not Connected")
               next if dev == device
               name  = dev + " : " + mac + " : " + name + " : " + link
               cards << Item(Id(dev), name)
+            end
+            Builtins.y2milestone("Hardware Cards %1", devs)
+            #Detect virtual cards
+            Dir.glob("/etc/sysconfig/network/ifcfg-*").each do |cardfile|
+                cardname=cardfile[29..-1]
+                next if cardname == "lo"
+                next if devs.include?(cardname)
+                name = cardname + " : virtual card"
+                cards << Item(Id(cardname), name)
             end
             return cards
         end
