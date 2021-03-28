@@ -39,7 +39,7 @@ module Yast
             loop do
                 case ret
                 when :start
-                        if DialogsInst.ReadBackupDialog()
+                     if DialogsInst.ReadBackupDialog()
                          @readBackup = true
                          SCR.Read(path(".etc.cranix"))
                          ret = :network
