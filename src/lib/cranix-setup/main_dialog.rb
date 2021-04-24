@@ -56,20 +56,18 @@ module Yast
                      end
                 when :basic
                         ret = DialogsInst.BasicSetting()
-                when :expert
-                        ret = DialogsInst.ExpertSetting()
                 when :network
                         ret = DialogsInst.CardDialog()
                 when :write
                      SCR.Execute(path(".target.bash"), "/usr/share/cranix/tools/register.sh")
+		     if SCR.Read(path(".etc.cranix.CRANIX_INTERNET_FILTER")) == "squid"
+                        Package.DoInstall(["cranix-proxy"])
+		     else
+                        Package.DoInstall(["cranix-unbound"])
+		     end
                      ret = DialogsInst.CranixSetup()
                      Package.DoInstall(["cranix-clone","cranix-web"])
                      Package.DoRemove(["firewalld","yast2-firewall","firewalld-lang"])
-                     Service.Enable("xinetd")
-                     Service.Enable("vsftpd")
-                     Service.Enable("squid")
-                     Service.Enable("cranix-api")
-                     Service.Enable("sshd")
                      break
                 when :abort, :cancel
                      break
@@ -77,8 +75,6 @@ module Yast
             end
             SCR.Execute(path(".target.bash"), "rm -rf /var/lib/YaST2/reconfig_system")
             return :next
-        end
-        def event_loop
         end
     end
 end

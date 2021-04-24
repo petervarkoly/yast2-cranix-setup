@@ -138,7 +138,6 @@ module Yast
                      ip = SCR.Read(path(".etc.cranix.CRANIX_SERVER"))
                    mail = SCR.Read(path(".etc.cranix.CRANIX_MAILSERVER"))
                    prox = SCR.Read(path(".etc.cranix.CRANIX_PROXY"))
-                   prin = SCR.Read(path(".etc.cranix.CRANIX_PRINTSERVER"))
                  backup = SCR.Read(path(".etc.cranix.CRANIX_BACKUP_SERVER"))
                      nm = SCR.Read(path(".etc.cranix.CRANIX_NETMASK"))
                  intdev = Yast::UI.QueryWidget(Id(:intdev), :CurrentItem)
@@ -207,8 +206,6 @@ PREFIXLEN='" + nm +"'
 STARTMODE='auto'
 IPADDR_mail='" + mail + "/" + nm +"'
 LABEL_mail='mail'
-IPADDR_print='" + prin + "/" + nm +"'
-LABEL_print='print'
 IPADDR_proxy='" + prox + "/" + nm +"'
 LABEL_proxy='proxy'
 "
@@ -252,7 +249,6 @@ host_tmp = "#
 127.0.0.1       localhost
 "+ ip     + "   "+ serverName + "." + domain + " " + serverName + "
 "+ mail   + "   mailserver."  + domain + " mailserver
-"+ prin   + "   printserver." + domain + " printserver
 "+ prox   + "   proxy."       + domain + " proxy
 "+ backup + "   backup."      + domain + " backup
 216.239.32.20  www.google.de www.google.com www.google.fr www.google.it www.google.hu www.google.en
@@ -301,6 +297,9 @@ host_tmp = "#
             Builtins.foreach(instTypes) do |k, v|
               itemlist = Builtins.add(itemlist, Item(Id(k), v))
             end
+	    filter_items = []
+	    filter_items << Item(Id("dns"),   _("DNS-Filter"), true)
+	    filter_items << Item(Id("proxy"), _("Proxy-Filter"), false)
 
             # Dialog contents
             contents = VBox(
@@ -345,14 +344,14 @@ host_tmp = "#
                        HWeight( 1, InputField(Id(:expert_admin),   _("Server IP"),"")),HSpacing(1),
                        HWeight( 1, InputField(Id(:expert_portal),  _("Portal IP"),"")),HSpacing(1),
                        HWeight( 1, InputField(Id(:expert_proxy),   _("Proxy IP"),"")),HSpacing(1),
-                       HWeight( 1, InputField(Id(:expert_print),   _("Printserver IP"),"")),HSpacing(1),
+                       HWeight( 1, InputField(Id(:expert_backup),  _("Backup IP"),"")),
                     )),
                     Left(HBox(
                        HSpacing(8),
                        HWeight( 1, InputField(Id(:expert_network), _("Internal Network"),"")),HSpacing(1),
                        HWeight( 1, ComboBox(Id(:expert_netmask),   _("Netmask"),lnetmask("expert"))),HSpacing(1),
                        HWeight( 1, ComboBox(Id(:expert_server_nm), _("Servernet Netmask"),lnetmask("expert"))),
-                       HWeight( 1, InputField(Id(:expert_backup),  _("Backup IP"),"")),
+                       HWeight( 1, Label(""))
                     )),
                     Left(HBox(
                        HSpacing(8),
@@ -363,6 +362,8 @@ host_tmp = "#
                     )),
                     VSpacing(1),
                     HBox(
+                       HSpacing(8),
+                       Left(ComboBox(Id(:net_filter),Opt(:notify),_("Internet Filter"),filter_items)),
                        HSpacing(8),
                        Left(CheckBox(Id(:use_dhcp), _("Enable DHCP Server"), true )),
                        HSpacing(8),
@@ -393,7 +394,6 @@ host_tmp = "#
             UI.ChangeWidget(Id(:expert_admin), :Enabled, false)
             UI.ChangeWidget(Id(:expert_portal), :Enabled, false)
             UI.ChangeWidget(Id(:expert_proxy), :Enabled, false)
-            UI.ChangeWidget(Id(:expert_print), :Enabled, false)
             UI.ChangeWidget(Id(:expert_backup), :Enabled, false)
             UI.ChangeWidget(Id(:expert_first), :Enabled, false)
 
@@ -422,7 +422,6 @@ host_tmp = "#
                    UI.ChangeWidget(Id(:expert_admin), :Enabled, true)
                    UI.ChangeWidget(Id(:expert_portal), :Enabled, true)
                    UI.ChangeWidget(Id(:expert_proxy), :Enabled, true)
-                   UI.ChangeWidget(Id(:expert_print), :Enabled, true)
                    UI.ChangeWidget(Id(:expert_backup), :Enabled, true)
                    UI.ChangeWidget(Id(:expert_first), :Enabled, true)
                 else
@@ -437,7 +436,6 @@ host_tmp = "#
                    UI.ChangeWidget(Id(:expert_admin), :Enabled, false)
                    UI.ChangeWidget(Id(:expert_portal), :Enabled, false)
                    UI.ChangeWidget(Id(:expert_proxy), :Enabled, false)
-                   UI.ChangeWidget(Id(:expert_print), :Enabled, false)
                    UI.ChangeWidget(Id(:expert_backup), :Enabled, false)
                    UI.ChangeWidget(Id(:expert_first), :Enabled, false)
                 end
@@ -462,7 +460,6 @@ host_tmp = "#
                    SCR.Write(path(".etc.cranix.CRANIX_NETWORK"),      nets )
                    SCR.Write(path(".etc.cranix.CRANIX_SERVER"),       admin )
                    SCR.Write(path(".etc.cranix.CRANIX_MAILSERVER"),   Convert.to_string(UI.QueryWidget(Id(:expert_portal),   :Value)) )
-                   SCR.Write(path(".etc.cranix.CRANIX_PRINTSERVER"),  Convert.to_string(UI.QueryWidget(Id(:expert_print),    :Value)) )
                    SCR.Write(path(".etc.cranix.CRANIX_PROXY"),        Convert.to_string(UI.QueryWidget(Id(:expert_proxy),    :Value)) )
                    SCR.Write(path(".etc.cranix.CRANIX_BACKUP_SERVER"),Convert.to_string(UI.QueryWidget(Id(:expert_backup),   :Value)) )
                    anon_start = Convert.to_string(UI.QueryWidget(Id(:expert_anon),    :Value))
@@ -485,8 +482,7 @@ host_tmp = "#
                    SCR.Write(path(".etc.cranix.CRANIX_NETWORK"),      nets )
                    SCR.Write(path(".etc.cranix.CRANIX_SERVER"),       nets.chomp("0") + "2" )
                    SCR.Write(path(".etc.cranix.CRANIX_MAILSERVER"),   nets.chomp("0") + "3" )
-                   SCR.Write(path(".etc.cranix.CRANIX_PRINTSERVER"),  nets.chomp("0") + "4" )
-                   SCR.Write(path(".etc.cranix.CRANIX_PROXY"),        nets.chomp("0") + "5" )
+                   SCR.Write(path(".etc.cranix.CRANIX_PROXY"),        nets.chomp("0") + "4" )
                    SCR.Write(path(".etc.cranix.CRANIX_BACKUP_SERVER"),nets.chomp("0") + "6" )
                    case netm
                    when "24","23","22"
@@ -524,6 +520,7 @@ host_tmp = "#
                  SCR.Write(path(".etc.cranix.CRANIX_WORKGROUP"),    workgroup )
                  SCR.Write(path(".etc.cranix.CRANIX_REG_CODE"),     Convert.to_string(UI.QueryWidget(Id(:regcode),:Value)))
                  SCR.Write(path(".etc.cranix.CRANIX_TYPE"),         Convert.to_string(UI.QueryWidget(Id(:type),:Value)))
+                 SCR.Write(path(".etc.cranix.CRANIX_INTERNET_FILTER"), Convert.to_string(UI.QueryWidget(Id(:net_filter),:Value)))
                  SCR.Write(path(".etc.cranix.CRANIX_ISGATE"),       Convert.to_boolean(UI.QueryWidget(Id(:is_gate),:Value)) ? "yes" : "no" )
                  SCR.Write(path(".etc.cranix.CRANIX_USE_DHCP"),     Convert.to_boolean(UI.QueryWidget(Id(:use_dhcp),:Value)) ? "yes" : "no" )
                  SCR.Write(path(".etc.cranix"),nil)
