@@ -1,4 +1,4 @@
-# OSS configuration editor
+# CRNAIX configuration editor
 
-The project provides an interface for configuring OSS.
+The project provides an interface for configuring CRNAIX or CEPHALIX server.
 
