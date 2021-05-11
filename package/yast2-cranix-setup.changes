@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue May 11 10:48:00 UTC 2021 - Peter Varkoly <pvarkoly@cephalix.eu>
+
+- 94f82a4862437d4b77372d6c06cf3dcdf217ee38
+  Do not remove firewalld packages
+- 4.4.1
+
+-------------------------------------------------------------------
 Sun Apr 25 05:45:16 UTC 2021 - Peter Varkoly <pvarkoly@cephalix.eu>
 
 - 1f324c9d4d206c30c2bf251c1521a4eec2b1aa19 (HEAD -> master)
