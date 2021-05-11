@@ -39,7 +39,7 @@ module Yast
             loop do
                 case ret
                 when :start
-                        if DialogsInst.ReadBackupDialog()
+                     if DialogsInst.ReadBackupDialog()
                          @readBackup = true
                          SCR.Read(path(".etc.cranix"))
                          ret = :network
@@ -67,7 +67,6 @@ module Yast
 		     end
                      ret = DialogsInst.CranixSetup()
                      Package.DoInstall(["cranix-clone","cranix-web"])
-                     Package.DoRemove(["firewalld","yast2-firewall","firewalld-lang"])
                      break
                 when :abort, :cancel
                      break
