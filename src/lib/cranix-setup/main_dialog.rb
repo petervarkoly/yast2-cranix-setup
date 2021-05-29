@@ -1,6 +1,6 @@
 # encoding: utf-8
 # ------------------------------------------------------------------------------
-# Copyright (c) 2016 Peter Varkoly, Nuernberg, Germany.
+# Copyright (c) 2021 Peter Varkoly, Nuernberg, Germany.
 #
 # Author: Peter Varkoly <peter@varkoly.de>
 

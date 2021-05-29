@@ -33,7 +33,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 %description
 Setup for the CRANIX and CEPHALIX server
 
-%_oss_author
+%_cranix_author
 
 %prep
 %setup -q
