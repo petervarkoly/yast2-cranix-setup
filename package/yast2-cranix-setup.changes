@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Sat May 29 13:55:00 UTC 2021 - Peter Varkoly <pvarkoly@cephalix.eu>
+
+- eb85170b059f28d2e5deef4afc431f450544e22f
+  Turn to firewalld: Set extdev as interface in the zones publix and 
+  external
+- 4.4.2 
+
+-------------------------------------------------------------------
 Tue May 11 10:48:00 UTC 2021 - Peter Varkoly <pvarkoly@cephalix.eu>
 
 - b65b2b0465f23d013468c4e08216e54f4fbe27f9
