@@ -213,7 +213,6 @@ LABEL_proxy='proxy'
 
                  # We write the internal device every time as internal device.
                  if is_gate
-                     SCR.Execute(path(".target.bash"),"/usr/bin/firewall-cmd --permanent --zone=public   --add-interface=" + extdev )
                      SCR.Execute(path(".target.bash"),"/usr/bin/firewall-cmd --permanent --zone=external --add-interface=" + extdev )
                  end
                  SCR.Write(path(".etc.dhcpd.DHCPD_INTERFACE"), intdev)
