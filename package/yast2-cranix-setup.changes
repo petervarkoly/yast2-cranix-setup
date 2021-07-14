@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jul 14 09:02:45 UTC 2021 - Peter Varkoly <pvarkoly@cephalix.eu>
+
+- 2bf674df6b0d88744a45930304fc82152ca957a2 (HEAD -> master, origin/master)
+  Fix setting zone for the external network device.
+- 4.4.3 
+
+-------------------------------------------------------------------
 Sat May 29 13:55:00 UTC 2021 - Peter Varkoly <pvarkoly@cephalix.eu>
 
 - eb85170b059f28d2e5deef4afc431f450544e22f
