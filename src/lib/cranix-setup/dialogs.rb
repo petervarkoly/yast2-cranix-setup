@@ -211,10 +211,6 @@ LABEL_proxy='proxy'
 "
                  File.write("/etc/sysconfig/network/ifcfg-" + intdev,intdevConf)
 
-                 # We write the internal device every time as internal device.
-                 if is_gate
-                     SCR.Execute(path(".target.bash"),"/usr/bin/firewall-cmd --permanent --zone=external --add-interface=" + extdev )
-                 end
                  SCR.Write(path(".etc.dhcpd.DHCPD_INTERFACE"), intdev)
                  SCR.Write(path(".etc.dhcpd"), nil)
                  domain = SCR.Read(path(".etc.cranix.CRANIX_DOMAIN"))
@@ -228,8 +224,9 @@ LABEL_proxy='proxy'
                  if is_gate
                     extdevConf = "BOOTPROTO='static'
 IPADDR='"+ ext_ip + "/" + ext_nm.to_s + "'
-PREFIXLEN='" +  ext_nm.to_s + " '
-STARTMODE='auto'"
+PREFIXLEN='" +  ext_nm.to_s + "'
+STARTMODE='auto'
+ZONE=external"
                     File.write("/etc/sysconfig/network/ifcfg-" + extdev,extdevConf)
                  end #end if is_gate
 host_tmp = "#
