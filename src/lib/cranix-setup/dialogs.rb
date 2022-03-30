@@ -137,6 +137,7 @@ module Yast
               when :next
                      ip = SCR.Read(path(".etc.cranix.CRANIX_SERVER"))
                    mail = SCR.Read(path(".etc.cranix.CRANIX_MAILSERVER"))
+                   prin = SCR.Read(path(".etc.cranix.CRANIX_PRINTSERVER"))
                    prox = SCR.Read(path(".etc.cranix.CRANIX_PROXY"))
                  backup = SCR.Read(path(".etc.cranix.CRANIX_BACKUP_SERVER"))
                      nm = SCR.Read(path(".etc.cranix.CRANIX_NETMASK"))
@@ -206,6 +207,8 @@ PREFIXLEN='" + nm +"'
 STARTMODE='auto'
 IPADDR_mail='" + mail + "/" + nm +"'
 LABEL_mail='mail'
+IPADDR_print='" + prin + "/" + nm +"'
+LABEL_print='print'
 IPADDR_proxy='" + prox + "/" + nm +"'
 LABEL_proxy='proxy'
 "
@@ -243,6 +246,7 @@ host_tmp = "#
 127.0.0.1       localhost
 "+ ip     + "   "+ serverName + "." + domain + " " + serverName + "
 "+ mail   + "   mailserver."  + domain + " mailserver
+"+ prin   + "   printserver." + domain + " printserver
 "+ prox   + "   proxy."       + domain + " proxy
 "+ backup + "   backup."      + domain + " backup
 216.239.32.20  www.google.de www.google.com www.google.fr www.google.it www.google.hu www.google.en
@@ -336,6 +340,7 @@ host_tmp = "#
                        HSpacing(8),
                        HWeight( 1, InputField(Id(:expert_admin),   _("Server IP"),"")),HSpacing(1),
                        HWeight( 1, InputField(Id(:expert_portal),  _("Portal IP"),"")),HSpacing(1),
+		       HWeight( 1, InputField(Id(:expert_print),   _("Printserver IP"),"")),HSpacing(1),
                        HWeight( 1, InputField(Id(:expert_proxy),   _("Proxy IP"),"")),HSpacing(1),
                        HWeight( 1, InputField(Id(:expert_backup),  _("Backup IP"),"")),
                     )),
@@ -386,6 +391,7 @@ host_tmp = "#
             UI.ChangeWidget(Id(:expert_anon_nm), :Enabled, false)
             UI.ChangeWidget(Id(:expert_admin), :Enabled, false)
             UI.ChangeWidget(Id(:expert_portal), :Enabled, false)
+	    UI.ChangeWidget(Id(:expert_print), :Enabled, false)
             UI.ChangeWidget(Id(:expert_proxy), :Enabled, false)
             UI.ChangeWidget(Id(:expert_backup), :Enabled, false)
             UI.ChangeWidget(Id(:expert_first), :Enabled, false)
@@ -414,6 +420,7 @@ host_tmp = "#
                    UI.ChangeWidget(Id(:expert_anon_nm), :Enabled, true)
                    UI.ChangeWidget(Id(:expert_admin), :Enabled, true)
                    UI.ChangeWidget(Id(:expert_portal), :Enabled, true)
+		   UI.ChangeWidget(Id(:expert_print), :Enabled, true)
                    UI.ChangeWidget(Id(:expert_proxy), :Enabled, true)
                    UI.ChangeWidget(Id(:expert_backup), :Enabled, true)
                    UI.ChangeWidget(Id(:expert_first), :Enabled, true)
@@ -428,6 +435,7 @@ host_tmp = "#
                    UI.ChangeWidget(Id(:expert_anon_nm), :Enabled, false)
                    UI.ChangeWidget(Id(:expert_admin), :Enabled, false)
                    UI.ChangeWidget(Id(:expert_portal), :Enabled, false)
+		   UI.ChangeWidget(Id(:expert_print), :Enabled, false)
                    UI.ChangeWidget(Id(:expert_proxy), :Enabled, false)
                    UI.ChangeWidget(Id(:expert_backup), :Enabled, false)
                    UI.ChangeWidget(Id(:expert_first), :Enabled, false)
@@ -453,6 +461,7 @@ host_tmp = "#
                    SCR.Write(path(".etc.cranix.CRANIX_NETWORK"),      nets )
                    SCR.Write(path(".etc.cranix.CRANIX_SERVER"),       admin )
                    SCR.Write(path(".etc.cranix.CRANIX_MAILSERVER"),   Convert.to_string(UI.QueryWidget(Id(:expert_portal),   :Value)) )
+                   SCR.Write(path(".etc.cranix.CRANIX_PRINTSERVER"),  Convert.to_string(UI.QueryWidget(Id(:expert_print),    :Value)) )
                    SCR.Write(path(".etc.cranix.CRANIX_PROXY"),        Convert.to_string(UI.QueryWidget(Id(:expert_proxy),    :Value)) )
                    SCR.Write(path(".etc.cranix.CRANIX_BACKUP_SERVER"),Convert.to_string(UI.QueryWidget(Id(:expert_backup),   :Value)) )
                    anon_start = Convert.to_string(UI.QueryWidget(Id(:expert_anon),    :Value))
@@ -475,7 +484,8 @@ host_tmp = "#
                    SCR.Write(path(".etc.cranix.CRANIX_NETWORK"),      nets )
                    SCR.Write(path(".etc.cranix.CRANIX_SERVER"),       nets.chomp("0") + "2" )
                    SCR.Write(path(".etc.cranix.CRANIX_MAILSERVER"),   nets.chomp("0") + "3" )
-                   SCR.Write(path(".etc.cranix.CRANIX_PROXY"),        nets.chomp("0") + "4" )
+                   SCR.Write(path(".etc.cranix.CRANIX_PRINTSERVER"),  nets.chomp("0") + "4" )
+                   SCR.Write(path(".etc.cranix.CRANIX_PROXY"),        nets.chomp("0") + "5" )
                    SCR.Write(path(".etc.cranix.CRANIX_BACKUP_SERVER"),nets.chomp("0") + "6" )
                    case netm
                    when "24","23","22"
