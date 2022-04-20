@@ -138,6 +138,7 @@ module Yast
                      ip = SCR.Read(path(".etc.cranix.CRANIX_SERVER"))
                    mail = SCR.Read(path(".etc.cranix.CRANIX_MAILSERVER"))
                    prin = SCR.Read(path(".etc.cranix.CRANIX_PRINTSERVER"))
+                   file = SCR.Read(path(".etc.cranix.CRANIX_FILESERVER"))
                    prox = SCR.Read(path(".etc.cranix.CRANIX_PROXY"))
                  backup = SCR.Read(path(".etc.cranix.CRANIX_BACKUP_SERVER"))
                      nm = SCR.Read(path(".etc.cranix.CRANIX_NETMASK"))
@@ -211,6 +212,8 @@ IPADDR_print='" + prin + "/" + nm +"'
 LABEL_print='print'
 IPADDR_proxy='" + prox + "/" + nm +"'
 LABEL_proxy='proxy'
+IPADDR_file='" + file + "/" + nm +"'
+LABEL_file='file'
 "
                  File.write("/etc/sysconfig/network/ifcfg-" + intdev,intdevConf)
 
@@ -248,6 +251,7 @@ host_tmp = "#
 "+ mail   + "   mailserver."  + domain + " mailserver
 "+ prin   + "   printserver." + domain + " printserver
 "+ prox   + "   proxy."       + domain + " proxy
+"+ file   + "   fileserver."  + domain + " fileserver
 "+ backup + "   backup."      + domain + " backup
 216.239.32.20  www.google.de www.google.com www.google.fr www.google.it www.google.hu www.google.en
 "
@@ -342,13 +346,14 @@ host_tmp = "#
                        HWeight( 1, InputField(Id(:expert_portal),  _("Portal IP"),"")),HSpacing(1),
 		       HWeight( 1, InputField(Id(:expert_print),   _("Printserver IP"),"")),HSpacing(1),
                        HWeight( 1, InputField(Id(:expert_proxy),   _("Proxy IP"),"")),HSpacing(1),
-                       HWeight( 1, InputField(Id(:expert_backup),  _("Backup IP"),"")),
+                       HWeight( 1, InputField(Id(:expert_file),    _("Fileserver IP"),""))
                     )),
                     Left(HBox(
                        HSpacing(8),
                        HWeight( 1, InputField(Id(:expert_network), _("Internal Network"),"")),HSpacing(1),
                        HWeight( 1, ComboBox(Id(:expert_netmask),   _("Netmask"),lnetmask("expert"))),HSpacing(1),
-                       HWeight( 1, ComboBox(Id(:expert_server_nm), _("Servernet Netmask"),lnetmask("expert"))),
+                       HWeight( 1, ComboBox(Id(:expert_server_nm), _("Servernet Netmask"),lnetmask("expert"))),HSpacing(1),
+                       HWeight( 1, InputField(Id(:expert_backup),  _("Backup IP"),"")),
                        HWeight( 1, Label(""))
                     )),
                     Left(HBox(
@@ -392,6 +397,7 @@ host_tmp = "#
             UI.ChangeWidget(Id(:expert_admin), :Enabled, false)
             UI.ChangeWidget(Id(:expert_portal), :Enabled, false)
 	    UI.ChangeWidget(Id(:expert_print), :Enabled, false)
+	    UI.ChangeWidget(Id(:expert_file), :Enabled, false)
             UI.ChangeWidget(Id(:expert_proxy), :Enabled, false)
             UI.ChangeWidget(Id(:expert_backup), :Enabled, false)
             UI.ChangeWidget(Id(:expert_first), :Enabled, false)
@@ -421,6 +427,7 @@ host_tmp = "#
                    UI.ChangeWidget(Id(:expert_admin), :Enabled, true)
                    UI.ChangeWidget(Id(:expert_portal), :Enabled, true)
 		   UI.ChangeWidget(Id(:expert_print), :Enabled, true)
+		   UI.ChangeWidget(Id(:expert_file), :Enabled, true)
                    UI.ChangeWidget(Id(:expert_proxy), :Enabled, true)
                    UI.ChangeWidget(Id(:expert_backup), :Enabled, true)
                    UI.ChangeWidget(Id(:expert_first), :Enabled, true)
@@ -436,6 +443,7 @@ host_tmp = "#
                    UI.ChangeWidget(Id(:expert_admin), :Enabled, false)
                    UI.ChangeWidget(Id(:expert_portal), :Enabled, false)
 		   UI.ChangeWidget(Id(:expert_print), :Enabled, false)
+		   UI.ChangeWidget(Id(:expert_file), :Enabled, false)
                    UI.ChangeWidget(Id(:expert_proxy), :Enabled, false)
                    UI.ChangeWidget(Id(:expert_backup), :Enabled, false)
                    UI.ChangeWidget(Id(:expert_first), :Enabled, false)
@@ -460,10 +468,11 @@ host_tmp = "#
                    SCR.Write(path(".etc.cranix.CRANIX_NETMASK_STRING"), Netmask.FromBits(netm.to_i) )
                    SCR.Write(path(".etc.cranix.CRANIX_NETWORK"),      nets )
                    SCR.Write(path(".etc.cranix.CRANIX_SERVER"),       admin )
-                   SCR.Write(path(".etc.cranix.CRANIX_MAILSERVER"),   Convert.to_string(UI.QueryWidget(Id(:expert_portal),   :Value)) )
-                   SCR.Write(path(".etc.cranix.CRANIX_PRINTSERVER"),  Convert.to_string(UI.QueryWidget(Id(:expert_print),    :Value)) )
-                   SCR.Write(path(".etc.cranix.CRANIX_PROXY"),        Convert.to_string(UI.QueryWidget(Id(:expert_proxy),    :Value)) )
-                   SCR.Write(path(".etc.cranix.CRANIX_BACKUP_SERVER"),Convert.to_string(UI.QueryWidget(Id(:expert_backup),   :Value)) )
+                   SCR.Write(path(".etc.cranix.CRANIX_MAILSERVER"),   Convert.to_string(UI.QueryWidget(Id(:expert_portal), :Value)) )
+                   SCR.Write(path(".etc.cranix.CRANIX_PRINTSERVER"),  Convert.to_string(UI.QueryWidget(Id(:expert_print),  :Value)) )
+                   SCR.Write(path(".etc.cranix.CRANIX_FILESERVER"),   Convert.to_string(UI.QueryWidget(Id(:expert_file),   :Value)) )
+                   SCR.Write(path(".etc.cranix.CRANIX_PROXY"),        Convert.to_string(UI.QueryWidget(Id(:expert_proxy),  :Value)) )
+                   SCR.Write(path(".etc.cranix.CRANIX_BACKUP_SERVER"),Convert.to_string(UI.QueryWidget(Id(:expert_backup), :Value)) )
                    anon_start = Convert.to_string(UI.QueryWidget(Id(:expert_anon),    :Value))
                    anon_nm    = Convert.to_string(UI.QueryWidget(Id(:expert_anon_nm), :Value))
                    anon_end   = IP.ComputeBroadcast(anon_start,Netmask.FromBits(anon_nm.to_i))
@@ -486,7 +495,8 @@ host_tmp = "#
                    SCR.Write(path(".etc.cranix.CRANIX_MAILSERVER"),   nets.chomp("0") + "3" )
                    SCR.Write(path(".etc.cranix.CRANIX_PRINTSERVER"),  nets.chomp("0") + "4" )
                    SCR.Write(path(".etc.cranix.CRANIX_PROXY"),        nets.chomp("0") + "5" )
-                   SCR.Write(path(".etc.cranix.CRANIX_BACKUP_SERVER"),nets.chomp("0") + "6" )
+                   SCR.Write(path(".etc.cranix.CRANIX_FILESERVER"),   nets.chomp("0") + "6" )
+                   SCR.Write(path(".etc.cranix.CRANIX_BACKUP_SERVER"),nets.chomp("0") + "7" )
                    case netm
                    when "24","23","22"
                         SCR.Write(path(".etc.cranix.CRANIX_ANON_DHCP_RANGE"), nets.chomp("0") + "32 " + nets.chomp("0") + "63" )
