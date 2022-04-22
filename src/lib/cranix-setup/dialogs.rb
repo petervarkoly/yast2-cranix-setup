@@ -317,7 +317,7 @@ host_tmp = "#
                      HSpacing(8),
                      VBox(
                         VSpacing(1),
-                        Left(InputField(Id(:regcode),    Opt(:hstretch), _("&Registration Code"),"NOT YET REGISTERED ")),
+                        Left(InputField(Id(:regcode),    Opt(:hstretch), _("&Registration Code"),"NOT YET REGISTERED")),
                         VSpacing(1),
                         Left(InputField(Id(:domain),     Opt(:hstretch), _("&Domain name for the CRANIX."),"DNSDOMAIN")),
                         VSpacing(1)
@@ -343,10 +343,10 @@ host_tmp = "#
                     Left(HBox(
                        HSpacing(8),
                        HWeight( 1, InputField(Id(:expert_admin),   _("Server IP"),"")),HSpacing(1),
-                       HWeight( 1, InputField(Id(:expert_portal),  _("Portal IP"),"")),HSpacing(1),
+                       HWeight( 1, InputField(Id(:expert_file),    _("Fileserver IP"),"")),HSpacing(1),
 		       HWeight( 1, InputField(Id(:expert_print),   _("Printserver IP"),"")),HSpacing(1),
-                       HWeight( 1, InputField(Id(:expert_proxy),   _("Proxy IP"),"")),HSpacing(1),
-                       HWeight( 1, InputField(Id(:expert_file),    _("Fileserver IP"),""))
+                       HWeight( 1, InputField(Id(:expert_portal),  _("Portal IP"),"")),HSpacing(1),
+                       HWeight( 1, InputField(Id(:expert_proxy),   _("Proxy IP"),""))
                     )),
                     Left(HBox(
                        HSpacing(8),
@@ -492,10 +492,10 @@ host_tmp = "#
                    SCR.Write(path(".etc.cranix.CRANIX_NETMASK_STRING"), Netmask.FromBits(netm.to_i) )
                    SCR.Write(path(".etc.cranix.CRANIX_NETWORK"),      nets )
                    SCR.Write(path(".etc.cranix.CRANIX_SERVER"),       nets.chomp("0") + "2" )
-                   SCR.Write(path(".etc.cranix.CRANIX_MAILSERVER"),   nets.chomp("0") + "3" )
+                   SCR.Write(path(".etc.cranix.CRANIX_FILESERVER"),   nets.chomp("0") + "3" )
                    SCR.Write(path(".etc.cranix.CRANIX_PRINTSERVER"),  nets.chomp("0") + "4" )
-                   SCR.Write(path(".etc.cranix.CRANIX_PROXY"),        nets.chomp("0") + "5" )
-                   SCR.Write(path(".etc.cranix.CRANIX_FILESERVER"),   nets.chomp("0") + "6" )
+                   SCR.Write(path(".etc.cranix.CRANIX_MAILSERVER"),   nets.chomp("0") + "5" )
+                   SCR.Write(path(".etc.cranix.CRANIX_PROXY"),        nets.chomp("0") + "6" )
                    SCR.Write(path(".etc.cranix.CRANIX_BACKUP_SERVER"),nets.chomp("0") + "7" )
                    case netm
                    when "24","23","22"
@@ -536,6 +536,9 @@ host_tmp = "#
                  SCR.Write(path(".etc.cranix.CRANIX_INTERNET_FILTER"), Convert.to_string(UI.QueryWidget(Id(:net_filter),:Value)))
                  SCR.Write(path(".etc.cranix.CRANIX_ISGATE"),       Convert.to_boolean(UI.QueryWidget(Id(:is_gate),:Value)) ? "yes" : "no" )
                  SCR.Write(path(".etc.cranix.CRANIX_USE_DHCP"),     Convert.to_boolean(UI.QueryWidget(Id(:use_dhcp),:Value)) ? "yes" : "no" )
+                 SCR.Write(path(".etc.cranix.CRANIX_NETBIOSNAME"), "admin" )
+                 SCR.Write(path(".etc.cranix.CRANIX_PRINTSERVER_NETBIOSNAME"), "printserver" )
+                 SCR.Write(path(".etc.cranix.CRANIX_FILESERVER_NETBIOSNAME"), "fileserver" )
                  SCR.Write(path(".etc.cranix"),nil)
                  ret = :network
                  break
