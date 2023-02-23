@@ -214,11 +214,6 @@ LABEL_proxy='proxy'
                  SCR.Write(path(".etc.dhcpd.DHCPD_INTERFACE"), intdev)
                  SCR.Write(path(".etc.dhcpd"), nil)
                  domain = SCR.Read(path(".etc.cranix.CRANIX_DOMAIN"))
-                 SCR.Read(path(".sysconfig.network.config"))
-                 SCR.Write(path(".sysconfig.network.config.NETCONFIG_DNS_STATIC_SEARCHLIST"),domain)
-                 SCR.Write(path(".sysconfig.network.config.NETCONFIG_DNS_STATIC_SERVERS"),"127.0.0.1")
-                 SCR.Write(path(".sysconfig.network.config"),nil)
-                 SCR.Execute(path(".target.bash"),"netconfig update -f")
                  serverName = SCR.Read(path(".etc.cranix.CRANIX_NETBIOSNAME"))
 
                  if is_gate
@@ -568,6 +563,14 @@ host_tmp = "#
             else
                SCR.Execute(path(".target.bash"), "/usr/share/cranix/setup/scripts/crx-setup.sh --passwdf=/tmp/passwd --accounts --postsetup --filter --api" )
             end
+
+            #Adapt nameserver confiugration
+            domain = SCR.Read(path(".etc.cranix.CRANIX_DOMAIN"))
+            SCR.Read(path(".sysconfig.network.config"))
+            SCR.Write(path(".sysconfig.network.config.NETCONFIG_DNS_STATIC_SEARCHLIST"),domain)
+            SCR.Write(path(".sysconfig.network.config.NETCONFIG_DNS_STATIC_SERVERS"),"127.0.0.1")
+            SCR.Write(path(".sysconfig.network.config"),nil)
+            SCR.Execute(path(".target.bash"),"netconfig update -f")
             SCR.Execute(path(".target.bash"), "rm /tmp/passwd")
         end
 
