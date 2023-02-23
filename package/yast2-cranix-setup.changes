@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Feb 23 16:17:33 UTC 2023 - Peter Varkoly <pvarkoly@cephalix.eu>
+
+- 8afa941db1498c6be1003bea49feba576e4f227c
+  Write nameserver configuration after the samba-ad-dc server is
+  ready to work
+- 4.5.0 
+
+-------------------------------------------------------------------
 Fri Apr 22 14:33:16 UTC 2022 - Peter Varkoly <pvarkoly@cephalix.eu>
 
 - 3402dc1595f5458a71890df75789798394040fa0

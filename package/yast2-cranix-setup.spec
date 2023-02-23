@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-cranix-setup
-Version:	4.4.7
+Version:	4.5.0
 Release:	0
 License:	MIT
 Summary:	Setup for CRANIX/CEPHALIX
