@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Mar  8 07:13:53 UTC 2024 - Peter Varkoly <pvarkoly@cephalix.eu>
+
+- fce53ef9c759fce4e16c38035381311d01c3d221
+  Stop all services befor staring the setup
+- 4.5.1 
+
+-------------------------------------------------------------------
 Thu Feb 23 16:17:33 UTC 2023 - Peter Varkoly <pvarkoly@cephalix.eu>
 
 - 8afa941db1498c6be1003bea49feba576e4f227c
