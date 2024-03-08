@@ -1,7 +1,6 @@
 # encoding: utf-8
 # ------------------------------------------------------------------------------
-# Copyright (c) 2017 Dipl. Ing. Peter Varkoly, Nuernberg, Germany.
-Yast.import 'Popup'
+# Copyright (c) 2024 Dipl. Ing. Peter Varkoly, Nuernberg, Germany.
 module Yast
   class InstCranixSetup < Client
     def main
