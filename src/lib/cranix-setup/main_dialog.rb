@@ -5,16 +5,16 @@
 # Author: Peter Varkoly <peter@varkoly.de>
 
 require 'cranix-setup/dialogs'
-require 'yast2/systemd/service'
 
 module Yast
     SERVICES_TO_STOP = [
       'cron',
+      'cranix-api',
       'samba-ad',
       'samba-fileserver',
       'samba-printserver',
       'smbd',
-      'cranix-api'
+      'unbound'
     ]
     class MainDialog < Client
         include Yast
@@ -40,8 +40,7 @@ module Yast
             SCR.Write(path(".sysconfig.network.config"),nil)
             Lan.Read(:nocache)
             SERVICES_TO_STOP.each do |service|
-              unit = Yast2::Systemd::Service.find(service)
-              unit.send(:stop)
+              system("/usr/bin/systemctl stop #{service}")
             end
             Builtins.y2milestone("initialize CRANIX finished")
         end
