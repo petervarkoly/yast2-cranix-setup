@@ -20,7 +20,7 @@ module Yast
         include Yast
         include UIShortcuts
         include I18n
-        include Logger
+        include Yast::Logger
 
         def initialize
             Yast.import 'Icon'
@@ -32,17 +32,14 @@ module Yast
             Yast.import 'UI'
             Yast.import 'Wizard'
             textdomain 'cranix'
-            Builtins.y2milestone("initialize CRANIX started")
+            log.info("Initialize CRANIX started")
             @readBackup = false
             Wizard.OpenNextBackStepsDialog()
             SCR.Read(path(".sysconfig.network.config"))
             SCR.Write(path(".sysconfig.network.config.LINK_REQUIRED"),"no")
             SCR.Write(path(".sysconfig.network.config"),nil)
             Lan.Read(:nocache)
-            SERVICES_TO_STOP.each do |service|
-              system("/usr/bin/systemctl stop #{service}")
-            end
-            Builtins.y2milestone("initialize CRANIX finished")
+            log.info("Initialize CRANIX finished")
         end
 
         def run
@@ -77,6 +74,10 @@ module Yast
 		     else
                         Package.DoInstall(["cranix-unbound"])
 		     end
+                     log.info("Stop all services")
+                     SERVICES_TO_STOP.each do |service|
+                       system("/usr/bin/systemctl stop #{service}")
+                     end
                      ret = DialogsInst.CranixSetup()
                      Package.DoInstall(["cranix-clone","cranix-web"])
                      break
