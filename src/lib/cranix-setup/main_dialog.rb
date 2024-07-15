@@ -64,20 +64,21 @@ module Yast
                         ret = :basic
                      end
                 when :basic
-                        ret = DialogsInst.BasicSetting()
-                when :network
-                        ret = DialogsInst.CardDialog()
-                when :write
+                     ret = DialogsInst.BasicSetting()
                      SCR.Execute(path(".target.bash"), "/usr/share/cranix/tools/register.sh")
 		     if SCR.Read(path(".etc.cranix.CRANIX_INTERNET_FILTER")) == "squid"
                         Package.DoInstall(["cranix-proxy"])
 		     else
                         Package.DoInstall(["cranix-unbound"])
 		     end
+                when :network
+                     ret = DialogsInst.CardDialog()
+                when :write
                      log.info("Stop all services")
                      SERVICES_TO_STOP.each do |service|
                        system("/usr/bin/systemctl stop #{service}")
                      end
+                     log.info("Start CRANIX Setup")
                      ret = DialogsInst.CranixSetup()
                      Package.DoInstall(["cranix-clone","cranix-web"])
                      break
